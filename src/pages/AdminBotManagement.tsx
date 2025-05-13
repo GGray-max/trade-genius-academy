@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -194,6 +193,13 @@ const AdminBotManagement = () => {
     }
   };
 
+  const handleCreateBotTabClick = () => {
+    const createTabTrigger = document.querySelector('[data-value="create"]') as HTMLElement;
+    if (createTabTrigger) {
+      createTabTrigger.click();
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -276,7 +282,7 @@ const AdminBotManagement = () => {
                   <div className="text-center py-12">
                     <p className="text-gray-500 mb-4">You haven't created any bots yet</p>
                     <Button 
-                      onClick={() => document.querySelector('[data-value="create"]')?.click()}
+                      onClick={handleCreateBotTabClick}
                       className="bg-tw-blue hover:bg-tw-blue-dark"
                     >
                       <PlusCircle className="mr-2 h-4 w-4" />
