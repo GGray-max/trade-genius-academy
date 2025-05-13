@@ -11,6 +11,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { LogIn, User } from "lucide-react";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -113,10 +114,16 @@ const Navbar = () => {
           ) : (
             <>
               <Link to="/login">
-                <Button variant="outline">Log in</Button>
+                <Button variant="outline">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Log in
+                </Button>
               </Link>
               <Link to="/signup">
-                <Button className="bg-tw-blue hover:bg-tw-blue-dark">Sign up</Button>
+                <Button className="bg-tw-blue hover:bg-tw-blue-dark">
+                  <User className="mr-2 h-4 w-4" />
+                  Sign up
+                </Button>
               </Link>
             </>
           )}
