@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -25,7 +26,7 @@ const formSchema = z.object({
 });
 
 const Login = () => {
-  const navigate = useNavigate();
+  const { signIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -40,23 +41,10 @@ const Login = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
-      // Here you would connect to Supabase for authentication
-      // const { data, error } = await supabase.auth.signInWithPassword({
-      //   email: values.email,
-      //   password: values.password,
-      // });
-      
-      // if (error) throw error;
-      
-      // For now, simulate login
-      console.log("Login successful:", values);
-      toast.success("Login successful");
-      
-      // Navigate to dashboard (will implement role-based routing later)
-      navigate("/dashboard");
-    } catch (error: any) {
-      console.error("Login failed:", error);
-      toast.error(error.message || "Login failed. Please try again.");
+      await signIn(values.email, values.password);
+    } catch (error) {
+      // Error is handled in the auth context
+      console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }

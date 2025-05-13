@@ -1,10 +1,9 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 import { UserPlus, Eye, EyeOff } from "lucide-react";
 
 import MainLayout from "@/components/layout/MainLayout";
@@ -18,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters" }),
@@ -30,7 +30,7 @@ const formSchema = z.object({
 });
 
 const Signup = () => {
-  const navigate = useNavigate();
+  const { signUp } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -48,28 +48,10 @@ const Signup = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
-      // Here you would connect to Supabase for authentication
-      // const { data, error } = await supabase.auth.signUp({
-      //   email: values.email,
-      //   password: values.password,
-      //   options: {
-      //     data: {
-      //       username: values.username
-      //     }
-      //   }
-      // });
-      
-      // if (error) throw error;
-      
-      // For now, simulate signup
-      console.log("Signup successful:", values);
-      toast.success("Account created successfully! Please check your email for verification.");
-      
-      // Navigate to login (or dashboard if auto-login is preferred)
-      navigate("/login");
-    } catch (error: any) {
-      console.error("Signup failed:", error);
-      toast.error(error.message || "Signup failed. Please try again.");
+      await signUp(values.email, values.password, values.username);
+    } catch (error) {
+      // Error is handled in the auth context
+      console.error("Signup error:", error);
     } finally {
       setIsLoading(false);
     }

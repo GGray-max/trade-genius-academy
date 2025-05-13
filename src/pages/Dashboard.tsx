@@ -6,9 +6,12 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import StatCard from "@/components/dashboard/StatCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [greeting, setGreeting] = useState("");
+  const { profile } = useAuth();
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -27,7 +30,7 @@ const Dashboard = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">{greeting}, John</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">{greeting}, {profile?.username || 'User'}</h1>
           <p className="mt-1 text-sm text-gray-500">
             Here's what's happening with your trading bots today.
           </p>
@@ -62,6 +65,25 @@ const Dashboard = () => {
             trendValue="-2.8% this week"
           />
         </div>
+
+        {/* Request a Custom Bot Card */}
+        <Card className="bg-gradient-to-r from-tw-blue-light to-tw-blue p-1">
+          <div className="bg-white rounded-sm p-4">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div>
+                <h3 className="text-xl font-semibold">Need a Custom Trading Bot?</h3>
+                <p className="text-gray-600 mt-1">
+                  Request our team of experts to build a custom trading bot tailored to your needs.
+                </p>
+              </div>
+              <Link to="/dashboard/request-bot">
+                <Button className="bg-tw-blue hover:bg-tw-blue-dark whitespace-nowrap">
+                  Request a Custom Bot
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </Card>
 
         <div className="grid grid-cols-1 gap-5 mt-8 lg:grid-cols-2">
           {/* Active Bots */}

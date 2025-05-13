@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,10 +10,13 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import { LogIn, User } from "lucide-react";
+import { LogIn, LogOut, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, profile, signOut } = useAuth();
+  const isLoggedIn = !!user;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -105,11 +107,31 @@ const Navbar = () => {
               <Link to="/dashboard">
                 <Button variant="outline">Dashboard</Button>
               </Link>
-              <Link to="/profile">
-                <div className="w-9 h-9 rounded-full bg-tw-blue-dark text-white flex items-center justify-center text-sm font-medium">
-                  JD
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium hidden md:block">
+                  {profile?.username}
+                </span>
+                <div className="relative group">
+                  <Avatar className="cursor-pointer">
+                    <AvatarFallback className="bg-tw-blue text-white">
+                      {profile?.username?.substring(0, 2).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                    <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</Link>
+                    <Link to="/dashboard/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</Link>
+                    {profile?.role === 'admin' && (
+                      <Link to="/dashboard/admin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Panel</Link>
+                    )}
+                    <button 
+                      onClick={signOut}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Sign out
+                    </button>
+                  </div>
                 </div>
-              </Link>
+              </div>
             </>
           ) : (
             <>

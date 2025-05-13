@@ -3,7 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import NotFound from "./pages/NotFound";
@@ -12,32 +13,86 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import CreateBot from "./pages/CreateBot";
+import BotRequests from "./pages/BotRequests";
+import RequestBot from "./pages/RequestBot";
+import AdminBotManagement from "./pages/AdminBotManagement";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import AdminRoute from "./components/auth/AdminRoute";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <BrowserRouter>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/marketplace" element={<Marketplace />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          
-          {/* Dashboard routes */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/admin" element={<AdminDashboard />} />
-          <Route path="/dashboard/bots/create" element={<CreateBot />} />
-          
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </BrowserRouter>
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            
+            {/* Protected routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/bot-requests"
+              element={
+                <ProtectedRoute>
+                  <BotRequests />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/request-bot"
+              element={
+                <ProtectedRoute>
+                  <RequestBot />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Admin routes */}
+            <Route
+              path="/dashboard/admin"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/dashboard/bots/create"
+              element={
+                <AdminRoute>
+                  <CreateBot />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/dashboard/admin/bot-management"
+              element={
+                <AdminRoute>
+                  <AdminBotManagement />
+                </AdminRoute>
+              }
+            />
+            
+            {/* Catch-all route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </TooltipProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  </QueryClientProvider>
 );
 
 export default App;

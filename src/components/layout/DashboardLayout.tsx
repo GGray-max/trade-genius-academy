@@ -10,12 +10,14 @@ import {
   Users,
   Shield,
   Bell,
-  LogOut
+  LogOut,
+  MessageSquare
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -23,19 +25,23 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
+  const { profile, isAdmin, signOut } = useAuth();
   
-  // This would be determined by your auth system
-  const userRole = 'admin'; // Could be 'admin', 'developer', or 'user'
+  // User role from auth context
+  const userRole = isAdmin ? 'admin' : 'user';
 
   const navigationItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["user", "developer", "admin"] },
     { name: "My Bots", href: "/dashboard/bots", icon: Bot, roles: ["user", "developer", "admin"] },
     { name: "Analytics", href: "/dashboard/analytics", icon: ChartLine, roles: ["user", "developer", "admin"] },
     { name: "Marketplace", href: "/marketplace", icon: ShoppingCart, roles: ["user", "developer", "admin"] },
+    { name: "Request Custom Bot", href: "/dashboard/request-bot", icon: MessageSquare, roles: ["user"] },
+    { name: "My Bot Requests", href: "/dashboard/bot-requests", icon: MessageSquare, roles: ["user", "admin"] },
     { name: "Settings", href: "/dashboard/settings", icon: Settings, roles: ["user", "developer", "admin"] },
-    // Admin and developer specific routes
+    // Admin specific routes
     { name: "User Management", href: "/dashboard/users", icon: Users, roles: ["admin"] },
     { name: "Bot Auditing", href: "/dashboard/audit", icon: Shield, roles: ["admin"] },
+    { name: "Bot Management", href: "/dashboard/admin/bot-management", icon: Bot, roles: ["admin"] },
   ];
 
   const filteredNavItems = navigationItems.filter(item => 
@@ -94,14 +100,16 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <div>
                 <Avatar>
                   <AvatarImage src="/placeholder.svg" />
-                  <AvatarFallback>JD</AvatarFallback>
+                  <AvatarFallback>
+                    {profile?.username?.substring(0, 2).toUpperCase() || 'U'}
+                  </AvatarFallback>
                 </Avatar>
               </div>
               <div className="ml-3 flex-1">
-                <p className="text-sm font-medium text-gray-700">John Doe</p>
+                <p className="text-sm font-medium text-gray-700">{profile?.username || 'User'}</p>
                 <p className="text-xs font-medium text-gray-500 capitalize">{userRole}</p>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={signOut}>
                 <LogOut className="h-4 w-4" />
               </Button>
             </div>
