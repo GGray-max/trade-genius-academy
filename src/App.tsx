@@ -28,96 +28,100 @@ import Leaderboard from "./pages/marketplace/Leaderboard";
 import NewReleases from "./pages/marketplace/NewReleases";
 import Settings from "./pages/Settings";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+// Create a new QueryClient instance inside the component
+const App = () => {
+  // Create a new QueryClient instance inside the component to ensure React context is properly set up
+  const queryClient = new QueryClient();
+  
+  return (
     <BrowserRouter>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            
-            {/* New routes */}
-            <Route path="/features" element={<Features />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/docs" element={<Docs />} />
-            <Route path="/marketplace/trending" element={<TrendingBots />} />
-            <Route path="/marketplace/leaderboard" element={<Leaderboard />} />
-            <Route path="/marketplace/new" element={<NewReleases />} />
-            
-            {/* Protected routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/bot-requests"
-              element={
-                <ProtectedRoute>
-                  <BotRequests />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/request-bot"
-              element={
-                <ProtectedRoute>
-                  <RequestBot />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/settings"
-              element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              }
-            />
-            
-            {/* Admin routes */}
-            <Route
-              path="/dashboard/admin"
-              element={
-                <AdminRoute>
-                  <AdminDashboard />
-                </AdminRoute>
-              }
-            />
-            <Route
-              path="/dashboard/bots/create"
-              element={
-                <AdminRoute>
-                  <CreateBot />
-                </AdminRoute>
-              }
-            />
-            <Route
-              path="/dashboard/admin/bot-management"
-              element={
-                <AdminRoute>
-                  <AdminBotManagement />
-                </AdminRoute>
-              }
-            />
-            
-            {/* Catch-all route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </TooltipProvider>
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/marketplace" element={<Marketplace />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              
+              {/* New routes */}
+              <Route path="/features" element={<Features />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/docs" element={<Docs />} />
+              <Route path="/marketplace/trending" element={<TrendingBots />} />
+              <Route path="/marketplace/leaderboard" element={<Leaderboard />} />
+              <Route path="/marketplace/new" element={<NewReleases />} />
+              
+              {/* Protected routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/bot-requests"
+                element={
+                  <ProtectedRoute>
+                    <BotRequests />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/request-bot"
+                element={
+                  <ProtectedRoute>
+                    <RequestBot />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Admin routes */}
+              <Route
+                path="/dashboard/admin"
+                element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/dashboard/bots/create"
+                element={
+                  <AdminRoute>
+                    <CreateBot />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/dashboard/admin/bot-management"
+                element={
+                  <AdminRoute>
+                    <AdminBotManagement />
+                  </AdminRoute>
+                }
+              />
+              
+              {/* Catch-all route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </BrowserRouter>
-  </QueryClientProvider>
-);
+  );
+};
 
 export default App;
