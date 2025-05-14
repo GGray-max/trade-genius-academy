@@ -19,6 +19,14 @@ import AdminBotManagement from "./pages/AdminBotManagement";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/auth/AdminRoute";
 
+// New page imports
+import Features from "./pages/Features";
+import Pricing from "./pages/Pricing";
+import Docs from "./pages/Docs";
+import TrendingBots from "./pages/marketplace/TrendingBots";
+import Leaderboard from "./pages/marketplace/Leaderboard";
+import NewReleases from "./pages/marketplace/NewReleases";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -33,6 +41,14 @@ const App = () => (
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            
+            {/* New routes */}
+            <Route path="/features" element={<Features />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/docs" element={<Docs />} />
+            <Route path="/marketplace/trending" element={<TrendingBots />} />
+            <Route path="/marketplace/leaderboard" element={<Leaderboard />} />
+            <Route path="/marketplace/new" element={<NewReleases />} />
             
             {/* Protected routes */}
             <Route
