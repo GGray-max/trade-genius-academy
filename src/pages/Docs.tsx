@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { createElement } from "react";
 import { Search, FileText, Book, Code, Terminal, HelpCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -130,7 +131,7 @@ const Docs = () => {
                   >
                     {categories.find(c => c.id === doc.category)?.icon && (
                       <div className="p-2 bg-tw-blue-light bg-opacity-20 rounded-md w-fit mb-4">
-                        {React.createElement(categories.find(c => c.id === doc.category)?.icon as any, {
+                        {createElement(categories.find(c => c.id === doc.category)?.icon as any, {
                           className: "h-5 w-5 text-tw-blue"
                         })}
                       </div>
@@ -158,7 +159,7 @@ const Docs = () => {
                         key={doc.id}
                         className="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow"
                       >
-                        {React.createElement(category.icon, {
+                        {createElement(category.icon, {
                           className: "h-5 w-5 text-tw-blue mb-4"
                         })}
                         <h3 className="text-lg font-semibold">{doc.title}</h3>
