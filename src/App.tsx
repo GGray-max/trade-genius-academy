@@ -18,6 +18,8 @@ import RequestBot from "./pages/RequestBot";
 import AdminBotManagement from "./pages/AdminBotManagement";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/auth/AdminRoute";
+import Analytics from "./pages/Analytics";
+import BotAuditing from "./pages/BotAuditing";
 
 // New page imports
 import Features from "./pages/Features";
@@ -31,7 +33,14 @@ import Settings from "./pages/Settings";
 // Create a new QueryClient instance inside the component
 const App = () => {
   // Create a new QueryClient instance inside the component to ensure React context is properly set up
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 1,
+        staleTime: 30000,
+      },
+    },
+  });
   
   return (
     <BrowserRouter>
@@ -87,6 +96,14 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/dashboard/analytics"
+                element={
+                  <ProtectedRoute>
+                    <Analytics />
+                  </ProtectedRoute>
+                }
+              />
               
               {/* Admin routes */}
               <Route
@@ -110,6 +127,14 @@ const App = () => {
                 element={
                   <AdminRoute>
                     <AdminBotManagement />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/dashboard/audit"
+                element={
+                  <AdminRoute>
+                    <BotAuditing />
                   </AdminRoute>
                 }
               />
