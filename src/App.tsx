@@ -26,6 +26,7 @@ import Docs from "./pages/Docs";
 import TrendingBots from "./pages/marketplace/TrendingBots";
 import Leaderboard from "./pages/marketplace/Leaderboard";
 import NewReleases from "./pages/marketplace/NewReleases";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <RequestBot />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               }
             />
