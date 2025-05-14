@@ -1,5 +1,5 @@
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import LoadingScreen from '../ui/LoadingScreen';
@@ -9,10 +9,19 @@ interface AdminRouteProps {
 }
 
 const AdminRoute = ({ children }: AdminRouteProps) => {
-  const { isAdmin, loading } = useAuth();
+  const { isAdmin, loading, refreshUserProfile, user } = useAuth();
+
+  useEffect(() => {
+    // When the component mounts, refresh the user profile to ensure we have the latest role
+    if (user && !loading) {
+      refreshUserProfile();
+    }
+  }, []);
 
   if (loading) {
-    return <LoadingScreen />;
+    return (
+      <LoadingScreen message="Verifying administrator access..." />
+    );
   }
 
   if (!isAdmin) {

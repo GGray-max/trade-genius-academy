@@ -1,11 +1,15 @@
 
 import { Loader2 } from "lucide-react";
 
-const LoadingScreen = () => {
+interface LoadingScreenProps {
+  message?: string;
+}
+
+const LoadingScreen = ({ message = "Loading..." }: LoadingScreenProps) => {
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <Loader2 className="h-10 w-10 text-tw-blue animate-spin" />
-      <p className="ml-2 text-lg">Loading...</p>
+    <div className="flex flex-col items-center justify-center min-h-[50vh]">
+      <Loader2 className="h-8 w-8 animate-spin text-tw-blue-dark" />
+      <p className="mt-4 text-gray-600">{message}</p>
     </div>
   );
 };

@@ -13,6 +13,13 @@ import { cn } from "@/lib/utils";
 import { LogIn, LogOut, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const { user, profile, signOut } = useAuth();
@@ -111,26 +118,35 @@ const Navbar = () => {
                 <span className="text-sm font-medium hidden md:block">
                   {profile?.username}
                 </span>
-                <div className="relative group">
-                  <Avatar className="cursor-pointer">
-                    <AvatarFallback className="bg-tw-blue text-white">
-                      {profile?.username?.substring(0, 2).toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-                    <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</Link>
-                    <Link to="/dashboard/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</Link>
+                
+                {/* Replace the problematic dropdown with shadcn/ui Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Avatar className="cursor-pointer">
+                      <AvatarFallback className="bg-tw-blue text-white">
+                        {profile?.username?.substring(0, 2).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <Link to="/dashboard">
+                      <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                    </Link>
+                    <Link to="/dashboard/settings">
+                      <DropdownMenuItem>Settings</DropdownMenuItem>
+                    </Link>
                     {profile?.role === 'admin' && (
-                      <Link to="/dashboard/admin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Panel</Link>
+                      <Link to="/dashboard/admin">
+                        <DropdownMenuItem>Admin Panel</DropdownMenuItem>
+                      </Link>
                     )}
-                    <button 
-                      onClick={signOut}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      Sign out
-                    </button>
-                  </div>
-                </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={signOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Sign out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </>
           ) : (

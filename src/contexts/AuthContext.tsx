@@ -13,6 +13,7 @@ type AuthContextType = {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, username: string) => Promise<void>;
   signOut: () => Promise<void>;
+  refreshUserProfile: () => Promise<void>;
 };
 
 export type UserProfile = {
@@ -33,39 +34,76 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        return null;
+      }
+      
+      return profileData as UserProfile;
+    } catch (error) {
+      console.error('Error in fetchProfile:', error);
+      return null;
+    }
+  };
+
+  const refreshUserProfile = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    
+    try {
+      const profileData = await fetchProfile(user.id);
+      
+      if (profileData) {
+        setProfile(profileData);
+        setIsAdmin(profileData.role === 'admin');
+      }
+    } catch (error) {
+      console.error('Error refreshing user profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     // Get initial session
     const initAuth = async () => {
       setLoading(true);
       
-      // Check if user is authenticated
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) {
-        console.error('Error getting session:', sessionError);
-        setLoading(false);
-        return;
-      }
-      
-      if (session?.user) {
-        setUser(session.user);
+      try {
+        // Check if user is authenticated
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        // Fetch user profile from profiles table
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        
-        if (profileError) {
-          console.error('Error fetching profile:', profileError);
-        } else if (profileData) {
-          setProfile(profileData as UserProfile);
-          setIsAdmin(profileData.role === 'admin');
+        if (sessionError) {
+          console.error('Error getting session:', sessionError);
+          setLoading(false);
+          return;
         }
+        
+        if (session?.user) {
+          setUser(session.user);
+          
+          // Fetch user profile from profiles table
+          const profileData = await fetchProfile(session.user.id);
+          
+          if (profileData) {
+            setProfile(profileData);
+            setIsAdmin(profileData.role === 'admin');
+          }
+        }
+      } catch (error) {
+        console.error('Error in initAuth:', error);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
 
     initAuth();
@@ -76,16 +114,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(session.user);
         
         // Fetch user profile
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
+        const profileData = await fetchProfile(session.user.id);
         
-        if (profileError) {
-          console.error('Error fetching profile:', profileError);
-        } else if (profileData) {
-          setProfile(profileData as UserProfile);
+        if (profileData) {
+          setProfile(profileData);
           setIsAdmin(profileData.role === 'admin');
         }
       } else if (event === 'SIGNED_OUT') {
@@ -102,6 +134,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
+      setLoading(true);
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) throw error;
@@ -111,11 +144,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error: any) {
       toast.error(error.message || 'Failed to sign in');
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const signUp = async (email: string, password: string, username: string) => {
     try {
+      setLoading(true);
       // Create auth user
       const { data, error } = await supabase.auth.signUp({ 
         email, 
@@ -151,11 +187,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error: any) {
       toast.error(error.message || 'Failed to sign up');
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const signOut = async () => {
     try {
+      setLoading(true);
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
@@ -163,6 +202,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       navigate('/login');
     } catch (error: any) {
       toast.error(error.message || 'Failed to sign out');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -173,7 +214,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loading,
     signIn,
     signUp,
-    signOut
+    signOut,
+    refreshUserProfile
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

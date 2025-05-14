@@ -18,6 +18,12 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -94,24 +100,32 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </nav>
           </div>
           
-          {/* User profile section */}
+          {/* User profile section - Updated with DropdownMenu */}
           <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
             <div className="flex items-center w-full">
-              <div>
-                <Avatar>
-                  <AvatarImage src="/placeholder.svg" />
-                  <AvatarFallback>
-                    {profile?.username?.substring(0, 2).toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-              <div className="ml-3 flex-1">
-                <p className="text-sm font-medium text-gray-700">{profile?.username || 'User'}</p>
-                <p className="text-xs font-medium text-gray-500 capitalize">{userRole}</p>
-              </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={signOut}>
-                <LogOut className="h-4 w-4" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild className="flex items-center w-full">
+                  <div className="flex items-center w-full cursor-pointer">
+                    <Avatar>
+                      <AvatarImage src="/placeholder.svg" />
+                      <AvatarFallback>
+                        {profile?.username?.substring(0, 2).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="ml-3 flex-1">
+                      <p className="text-sm font-medium text-gray-700">{profile?.username || 'User'}</p>
+                      <p className="text-xs font-medium text-gray-500 capitalize">{userRole}</p>
+                    </div>
+                    <LogOut className="h-4 w-4 text-gray-500" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuItem onClick={signOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
@@ -133,10 +147,19 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </div>
             <div className="ml-4 flex items-center md:ml-6 space-x-4">
               {/* Notification dropdown */}
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <span className="sr-only">View notifications</span>
-                <Bell className="h-5 w-5" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <span className="sr-only">View notifications</span>
+                    <Bell className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem>
+                    <span>No new notifications</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
