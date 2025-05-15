@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,18 +13,30 @@ import { Switch } from "@/components/ui/switch";
 import MainLayout from "@/components/layout/MainLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { PaymentModal } from "@/components/payments/PaymentModal";
 
 const Pricing = () => {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annually">("monthly");
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedTier, setSelectedTier] = useState<{
+    name: string;
+    price: number;
+  } | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleGetStarted = (tier: string) => {
+  const handleGetStarted = (tier: string, price: number) => {
     if (!user) {
       navigate("/signup");
     } else {
-      navigate("/dashboard");
+      setSelectedTier({ name: tier, price });
+      setIsPaymentModalOpen(true);
     }
+  };
+
+  const handlePaymentComplete = () => {
+    setIsPaymentModalOpen(false);
+    navigate("/dashboard");
   };
 
   const tiers = [
@@ -137,7 +148,7 @@ const Pricing = () => {
               <CardFooter>
                 <Button 
                   className={tier.highlighted ? "w-full bg-tw-blue hover:bg-tw-blue-dark" : "w-full"}
-                  onClick={() => handleGetStarted(tier.name)}
+                  onClick={() => handleGetStarted(tier.name, tier.price)}
                 >
                   Get Started
                 </Button>
@@ -168,6 +179,16 @@ const Pricing = () => {
           </div>
         </div>
       </div>
+
+      {selectedTier && (
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => setIsPaymentModalOpen(false)}
+          amount={selectedTier.price}
+          currency="USD"
+          planType={billingPeriod}
+        />
+      )}
     </MainLayout>
   );
 };

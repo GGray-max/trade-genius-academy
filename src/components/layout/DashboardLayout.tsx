@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -63,14 +62,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
       <div className="hidden md:flex md:w-64 md:flex-col">
-        <div className="flex flex-col flex-grow overflow-y-auto border-r border-gray-200 bg-white pt-5">
+        <div className="flex flex-col flex-grow overflow-y-auto border-r border-border bg-card pt-5">
           <div className="flex items-center flex-shrink-0 px-4">
             <Link to="/" className="flex items-center space-x-2">
               <div className="bg-gradient-to-r from-tw-blue to-tw-green rounded-md w-8 h-8"></div>
-              <span className="font-bold text-xl">TradeWizard</span>
+              <span className="font-bold text-xl text-foreground">TradeWizard</span>
             </Link>
           </div>
           <div className="mt-5 flex-grow flex flex-col">
@@ -82,7 +81,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   className={cn(
                     isActiveRoute(item.href)
                       ? "bg-tw-blue-light bg-opacity-15 text-tw-blue"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                     "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
                   )}
                 >
@@ -90,7 +89,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     className={cn(
                       isActiveRoute(item.href)
                         ? "text-tw-blue"
-                        : "text-gray-400 group-hover:text-gray-500",
+                        : "text-muted-foreground group-hover:text-accent-foreground",
                       "mr-3 flex-shrink-0 h-5 w-5"
                     )}
                   />
@@ -100,8 +99,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </nav>
           </div>
           
-          {/* User profile section - Updated with DropdownMenu */}
-          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
+          {/* User profile section */}
+          <div className="flex-shrink-0 flex border-t border-border p-4">
             <div className="flex items-center w-full">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="flex items-center w-full">
@@ -113,10 +112,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                       </AvatarFallback>
                     </Avatar>
                     <div className="ml-3 flex-1">
-                      <p className="text-sm font-medium text-gray-700">{profile?.username || 'User'}</p>
-                      <p className="text-xs font-medium text-gray-500 capitalize">{userRole}</p>
+                      <p className="text-sm font-medium text-foreground">{profile?.username || 'User'}</p>
+                      <p className="text-xs font-medium text-muted-foreground capitalize">{userRole}</p>
                     </div>
-                    <LogOut className="h-4 w-4 text-gray-500" />
+                    <LogOut className="h-4 w-4 text-muted-foreground" />
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-48">
@@ -134,11 +133,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Main content */}
       <div className="flex flex-col flex-1">
         {/* Top navigation */}
-        <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200">
+        <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-card border-b border-border">
           <div className="flex-1 px-4 flex justify-between">
             <div className="flex-1 flex items-center">
               {/* Mobile menu button */}
-              <button type="button" className="md:hidden px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-tw-blue">
+              <button type="button" className="md:hidden px-4 border-r border-border text-muted-foreground focus:outline-none focus:ring-2 focus:ring-inset focus:ring-tw-blue">
                 <span className="sr-only">Open sidebar</span>
                 <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
@@ -165,7 +164,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </div>
 
         {/* Page content */}
-        <main className="flex-1">
+        <main className="flex-1 bg-background">
           <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
               {children}
