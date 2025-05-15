@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from "react";
-import { ChartLine, TrendingUp, TrendingDown, Bot, Bell, Users } from "lucide-react";
+import { ChartLine, TrendingUp, TrendingDown, Bot, Bell, Users, Loader2 } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import StatCard from "@/components/dashboard/StatCard";
@@ -8,10 +7,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const [greeting, setGreeting] = useState("");
-  const { profile } = useAuth();
+  const { profile, loading } = useAuth();
+  const [dashboardData, setDashboardData] = useState({
+    activeSubscriptions: 0,
+    activeSignals: 0,
+    totalProfit: "$0",
+    winRate: "0%"
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -20,11 +29,60 @@ const Dashboard = () => {
     else setGreeting("Good evening");
   }, []);
 
-  // Demo data - would come from your API
-  const activeSubscriptions = 2;
-  const activeSignals = 5;
-  const totalProfit = "$1,245.78";
-  const winRate = "68%";
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        // Simulate API call - replace with actual API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        setDashboardData({
+          activeSubscriptions: 2,
+          activeSignals: 5,
+          totalProfit: "$1,245.78",
+          winRate: "68%"
+        });
+      } catch (err) {
+        setError("Failed to load dashboard data. Please try again later.");
+        toast({
+          title: "Error",
+          description: "Failed to load dashboard data. Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (!loading && profile) {
+      fetchDashboardData();
+    }
+  }, [loading, profile]);
+
+  if (loading || isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-tw-blue" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+          <p className="text-red-500">{error}</p>
+          <Button onClick={() => window.location.reload()}>
+            Retry
+          </Button>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -39,27 +97,27 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             title="Active Subscriptions"
-            value={activeSubscriptions}
+            value={dashboardData.activeSubscriptions}
             icon={<TrendingUp />}
             trend="up"
             trendValue="+1 from last week"
           />
           <StatCard
             title="Active Signals"
-            value={activeSignals}
+            value={dashboardData.activeSignals}
             icon={<Bell />}
             trend="neutral"
           />
           <StatCard
             title="Total Profit"
-            value={totalProfit}
+            value={dashboardData.totalProfit}
             icon={<ChartLine />}
             trend="up"
             trendValue="+15.3% this month"
           />
           <StatCard
             title="Win Rate"
-            value={winRate}
+            value={dashboardData.winRate}
             icon={<TrendingUp />}
             trend="down"
             trendValue="-2.8% this week"

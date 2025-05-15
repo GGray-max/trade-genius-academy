@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   username: string;
@@ -40,6 +39,11 @@ export interface Bot {
   reviews: Review[];
   subscriptions: number;
   isActive: boolean;
+  auditStatus?: 'pending' | 'in_progress' | 'approved' | 'rejected';
+  auditProgress?: number;
+  developer?: User;
+  auditor?: string;
+  lastAuditDate?: Date;
 }
 
 export interface BotStrategy {

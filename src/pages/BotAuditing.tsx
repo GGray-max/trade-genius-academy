@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -223,7 +222,7 @@ const BotAuditing = () => {
                         <TableRow key={bot.id}>
                           <TableCell className="font-medium">{bot.name}</TableCell>
                           <TableCell>{bot.developer?.name || "Unknown"}</TableCell>
-                          <TableCell>{bot.strategy}</TableCell>
+                          <TableCell>{bot.strategy.type}</TableCell>
                           <TableCell>{bot.riskLevel}</TableCell>
                           <TableCell>
                             <div className="flex space-x-2">
