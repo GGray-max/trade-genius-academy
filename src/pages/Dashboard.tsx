@@ -11,14 +11,14 @@ import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const [greeting, setGreeting] = useState("");
-  const { profile, loading } = useAuth();
+  const { profile, loading: authLoading } = useAuth();
   const [dashboardData, setDashboardData] = useState({
     activeSubscriptions: 0,
     activeSignals: 0,
     totalProfit: "$0",
     winRate: "0%"
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -30,7 +30,11 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchDashboardData = async () => {
+      if (authLoading) return;
+      
       try {
         setIsLoading(true);
         setError(null);
@@ -38,6 +42,8 @@ const Dashboard = () => {
         // Simulate API call - replace with actual API call
         await new Promise(resolve => setTimeout(resolve, 1000));
         
+        if (!mounted) return;
+
         setDashboardData({
           activeSubscriptions: 2,
           activeSignals: 5,
@@ -45,6 +51,7 @@ const Dashboard = () => {
           winRate: "68%"
         });
       } catch (err) {
+        if (!mounted) return;
         setError("Failed to load dashboard data. Please try again later.");
         toast({
           title: "Error",
@@ -52,20 +59,28 @@ const Dashboard = () => {
           variant: "destructive",
         });
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    if (!loading && profile) {
-      fetchDashboardData();
-    }
-  }, [loading, profile]);
+    fetchDashboardData();
 
-  if (loading || isLoading) {
+    return () => {
+      mounted = false;
+    };
+  }, [authLoading]);
+
+  // Only show loading state when first loading the dashboard
+  if (authLoading) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-tw-blue" />
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-tw-blue" />
+            <p className="text-sm text-muted-foreground">Loading your dashboard...</p>
+          </div>
         </div>
       </DashboardLayout>
     );
