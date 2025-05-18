@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,9 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/auth/AdminRoute";
 import Analytics from "./pages/Analytics";
 import BotAuditing from "./pages/BotAuditing";
+import MyBots from "./pages/MyBots";
+import BotDetails from "./pages/BotDetails";
+import BotBuilder from "./pages/BotBuilder";
 
 // New page imports
 import Features from "./pages/Features";
@@ -62,6 +64,7 @@ const App = () => {
               <Route path="/marketplace/trending" element={<TrendingBots />} />
               <Route path="/marketplace/leaderboard" element={<Leaderboard />} />
               <Route path="/marketplace/new" element={<NewReleases />} />
+              <Route path="/bots/:botId" element={<BotDetails />} />
               
               {/* Protected routes */}
               <Route
@@ -69,6 +72,22 @@ const App = () => {
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/my-bots"
+                element={
+                  <ProtectedRoute>
+                    <MyBots />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/bot-builder"
+                element={
+                  <ProtectedRoute>
+                    <BotBuilder />
                   </ProtectedRoute>
                 }
               />

@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
@@ -76,15 +75,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Get initial session
     const initAuth = async () => {
-      setLoading(true);
-      
       try {
         // Check if user is authenticated
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
           console.error('Error getting session:', sessionError);
-          setLoading(false);
           return;
         }
         
@@ -109,8 +105,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initAuth();
 
     // Listen for auth changes
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
+    const { data: { subscription: authListener } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session?.user?.id);
+      
+      if (session?.user) {
         setUser(session.user);
         
         // Fetch user profile
@@ -120,17 +118,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setProfile(profileData);
           setIsAdmin(profileData.role === 'admin');
         }
-      } else if (event === 'SIGNED_OUT') {
+
+        // If we're on the login page and have a session, redirect to dashboard
+        if (window.location.pathname === '/login') {
+          navigate('/dashboard');
+        }
+      } else {
         setUser(null);
         setProfile(null);
         setIsAdmin(false);
+        
+        // Only redirect to login if we're not already there and not on the public pages
+        const publicPages = ['/', '/signup', '/login'];
+        if (!publicPages.includes(window.location.pathname)) {
+          navigate('/login');
+        }
       }
     });
 
     return () => {
-      authListener.subscription.unsubscribe();
+      authListener.unsubscribe();
     };
-  }, []);
+  }, [navigate]);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -139,8 +148,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (error) throw error;
       
+      // Don't navigate here - let the auth state change handler do it
       toast.success('Logged in successfully');
-      navigate('/dashboard');
     } catch (error: any) {
       toast.error(error.message || 'Failed to sign in');
       throw error;

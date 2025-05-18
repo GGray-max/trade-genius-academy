@@ -10,7 +10,8 @@ import {
   Shield,
   Bell,
   LogOut,
-  MessageSquare
+  MessageSquare,
+  Code
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -37,7 +38,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const navigationItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["user", "developer", "admin"] },
-    { name: "My Bots", href: "/dashboard/bots", icon: Bot, roles: ["user", "developer", "admin"] },
+    { name: "My Bots", href: "/dashboard/my-bots", icon: Bot, roles: ["user", "developer", "admin"] },
+    { name: "Bot Builder", href: "/dashboard/bot-builder", icon: Code, roles: ["user", "developer", "admin"] },
     { name: "Analytics", href: "/dashboard/analytics", icon: ChartLine, roles: ["user", "developer", "admin"] },
     { name: "Marketplace", href: "/marketplace", icon: ShoppingCart, roles: ["user", "developer", "admin"] },
     { name: "Request Custom Bot", href: "/dashboard/request-bot", icon: MessageSquare, roles: ["user"] },

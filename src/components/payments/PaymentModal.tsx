@@ -14,6 +14,7 @@ import { Icons } from "@/components/ui/icons";
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -30,44 +31,51 @@ interface PaymentMethod {
   name: string;
   icon: keyof typeof Icons;
   description: string;
+  iconClassName?: string;
 }
 
 const paymentMethods: PaymentMethod[] = [
   {
-    id: "mpesa",
-    name: "M-PESA",
-    icon: "mpesa",
-    description: "Pay directly with M-PESA"
-  },
-  {
     id: "card",
     name: "Card Payment",
     icon: "creditCard",
-    description: "Pay with Visa, Mastercard, or American Express"
-  },
-  {
-    id: "bank",
-    name: "Bank Transfer",
-    icon: "bank",
-    description: "Direct bank transfer"
+    description: "Pay with Visa, Mastercard, or American Express",
+    iconClassName: "text-blue-600"
   },
   {
     id: "paypal",
     name: "PayPal",
     icon: "paypal",
-    description: "Pay with PayPal account"
+    description: "Fast and secure payment with PayPal",
+    iconClassName: "text-blue-700"
   },
   {
     id: "applepay",
     name: "Apple Pay",
     icon: "apple",
-    description: "Quick payment with Apple Pay"
+    description: "Quick payment with Apple Pay",
+    iconClassName: "text-gray-900"
   },
   {
     id: "googlepay",
     name: "Google Pay",
     icon: "google",
-    description: "Quick payment with Google Pay"
+    description: "Quick payment with Google Pay",
+    iconClassName: "text-blue-500"
+  },
+  {
+    id: "bank",
+    name: "Bank Transfer",
+    icon: "bank",
+    description: "Direct bank transfer",
+    iconClassName: "text-green-600"
+  },
+  {
+    id: "mpesa",
+    name: "M-PESA",
+    icon: "mpesa",
+    description: "Pay directly with M-PESA",
+    iconClassName: "text-green-700"
   }
 ];
 
@@ -213,9 +221,13 @@ export function PaymentModal({ isOpen, onClose, amount, currency, planType, botI
     throw { code: 'not_implemented', message: 'Google Pay is not yet implemented' };
   };
 
-  const renderIcon = (icon: keyof typeof Icons) => {
-    const IconComponent = Icons[icon];
-    return <IconComponent className="h-5 w-5" />;
+  const renderIcon = (method: PaymentMethod) => {
+    const IconComponent = Icons[method.icon];
+    return (
+      <div className={`p-2 rounded-full bg-gray-50 ${method.iconClassName}`}>
+        <IconComponent className="h-6 w-6" />
+      </div>
+    );
   };
 
   return (
@@ -228,9 +240,9 @@ export function PaymentModal({ isOpen, onClose, amount, currency, planType, botI
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="px-3 py-2 bg-accent rounded-md">
-            <p className="text-sm font-medium">Amount to pay:</p>
-            <p className="text-2xl font-bold">{currency} {amount.toFixed(2)}</p>
+          <div className="px-4 py-3 bg-accent/50 rounded-lg border border-accent">
+            <p className="text-sm font-medium text-muted-foreground">Amount to pay:</p>
+            <p className="text-3xl font-bold text-foreground">{currency} {amount.toFixed(2)}</p>
           </div>
           
           {error && (
@@ -243,33 +255,44 @@ export function PaymentModal({ isOpen, onClose, amount, currency, planType, botI
             </Alert>
           )}
           
-          <RadioGroup
-            value={selectedMethod}
-            onValueChange={setSelectedMethod}
-            className="grid gap-4"
-          >
-            {paymentMethods.map((method) => (
-              <div key={method.id} className="flex items-center space-x-2">
-                <RadioGroupItem value={method.id} id={method.id} />
-                <Label
-                  htmlFor={method.id}
-                  className="flex flex-1 items-center justify-between rounded-md border border-border p-4 cursor-pointer hover:bg-accent"
+          <ScrollArea className="h-[300px] pr-4">
+            <RadioGroup
+              value={selectedMethod}
+              onValueChange={setSelectedMethod}
+              className="grid gap-3"
+            >
+              {paymentMethods.map((method) => (
+                <div 
+                  key={method.id}
+                  className={`relative flex items-center rounded-lg border p-4 transition-all hover:bg-accent/50 ${
+                    selectedMethod === method.id 
+                      ? "border-primary bg-primary/5 shadow-sm" 
+                      : "border-input"
+                  }`}
                 >
-                  <div className="flex items-center space-x-3">
-                    {renderIcon(method.icon)}
-                    <div>
+                  <RadioGroupItem value={method.id} id={method.id} className="absolute left-4" />
+                  <Label
+                    htmlFor={method.id}
+                    className="flex flex-1 items-center gap-4 pl-7 cursor-pointer"
+                  >
+                    {renderIcon(method)}
+                    <div className="flex-1">
                       <p className="font-medium">{method.name}</p>
                       <p className="text-sm text-muted-foreground">{method.description}</p>
                     </div>
-                  </div>
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </ScrollArea>
         </div>
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-end gap-3">
           <Button variant="outline" onClick={handleClose}>Cancel</Button>
-          <Button onClick={handlePayment} disabled={!selectedMethod || loading}>
+          <Button 
+            onClick={handlePayment} 
+            disabled={!selectedMethod || loading}
+            className="min-w-[100px]"
+          >
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
