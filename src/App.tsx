@@ -39,6 +39,7 @@ import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
+import TestSession from "./pages/TestSession";
 
 // Create a new QueryClient instance inside the component
 const App = () => {
@@ -175,6 +176,9 @@ const App = () => {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/cookies" element={<Cookies />} />
+              
+              {/* Debug route for session testing */}
+              <Route path="/test-session" element={<TestSession />} />
               
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />

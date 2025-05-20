@@ -17,7 +17,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from '@/contexts/AuthContext';
+import { getTokenKey } from '@/lib/supabase';
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -25,9 +26,9 @@ const formSchema = z.object({
 });
 
 const Login = () => {
-  const { signIn, user, loading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { user, profile, signIn, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   // Reset loading state if auth context is not loading
@@ -37,14 +38,23 @@ const Login = () => {
     }
   }, [authLoading]);
 
-  // If user is already logged in, redirect to dashboard
+  // IMPORTANT: Don't navigate here - let the AuthContext handle the navigation
+  // This prevents navigation loops that cause browser throttling
   useEffect(() => {
-    if (user) {
-      const intendedUrl = localStorage.getItem('intendedUrl') || '/dashboard';
-      localStorage.removeItem('intendedUrl');
-      navigate(intendedUrl);
+    // Handle case where user is already logged in (with timeout protection)
+    if (user && profile) {
+      console.log('User already logged in, AuthContext will handle navigation');
+      navigate('/dashboard');
+    } else if (authLoading) {
+      // Add timeout protection to prevent UI getting stuck in loading state
+      const timer = setTimeout(() => {
+        console.log('Auth loading timeout reached, resetting loading state');
+        setIsLoading(false);
+      }, 3000); // 3 second timeout
+      
+      return () => clearTimeout(timer);
     }
-  }, [user, navigate]);
+  }, [user, profile, navigate, authLoading]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,15 +65,46 @@ const Login = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (isLoading || authLoading) return; // Prevent multiple submissions
+    console.log('Login form submitted with:', values.email);
+    
+    // Prevent multiple submissions
+    if (isLoading) {
+      console.log('Already submitting login form, ignoring duplicate submission');
+      return; 
+    }
+    
+    // Set a timeout to prevent the login getting stuck indefinitely
+    const loginTimeout = setTimeout(() => {
+      console.log('Login timeout reached - forcing reset of loading state');
+      setIsLoading(false);
+      toast.error('Login timed out. Please try again.');
+    }, 10000); // 10 second timeout
     
     setIsLoading(true);
     try {
+      console.log('Calling signIn function...');
+      
+      // Clear any existing session tokens with the correct token key
+      const tokenKey = getTokenKey();
+      console.log(`Clearing existing token (${tokenKey})`);
+      localStorage.removeItem(tokenKey);
+      
+      // Wait a moment to ensure the token clear takes effect
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Now attempt to sign in
       await signIn(values.email, values.password);
-      // Don't navigate here - let the auth context handle it
+      
+      console.log('signIn function completed successfully');
+      // Auth context will handle the navigation
     } catch (error) {
-      setIsLoading(false); // Reset loading state on error
+      console.error('Login error caught in form submit:', error);
+      toast.error('Login failed. Please try again.');
       form.reset({ email: values.email, password: "" });
+    } finally {
+      // Always reset loading state and clear the timeout
+      clearTimeout(loginTimeout);
+      setIsLoading(false);
     }
   };
 
@@ -71,16 +112,8 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  // Show loading state in the layout while auth is initializing
-  if (authLoading) {
-    return (
-      <MainLayout hideFooter>
-        <div className="flex min-h-[80vh] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-tw-blue" />
-        </div>
-      </MainLayout>
-    );
-  }
+  // Don't block the entire login page while auth is initializing
+  // This allows users to see and interact with the login form immediately
 
   return (
     <MainLayout hideFooter>
