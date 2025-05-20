@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChartLine, TrendingUp, TrendingDown, Bot, Bell, Users, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import StatCard from "@/components/dashboard/StatCard";
@@ -21,6 +22,7 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -84,6 +86,12 @@ const Dashboard = () => {
         </div>
       </DashboardLayout>
     );
+  }
+
+  // Redirect to login if profile is missing after loading
+  if (!authLoading && !profile) {
+    navigate('/login');
+    return null;
   }
 
   if (error) {
