@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +9,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import { LogIn, LogOut, User } from "lucide-react";
+import { LogIn, LogOut, User, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -22,8 +21,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
-  const { user, profile, signOut } = useAuth();
-  const isLoggedIn = !!user;
+  const { user, profile, signOut, loading } = useAuth();
+  // Only consider logged in if we have both user AND profile
+  const isLoggedIn = !!user && !!profile;
+
+  // Show loading state while authenticating
+  if (loading) {
+    return (
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 items-center justify-between">
+          <div className="flex items-center gap-8">
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="bg-gradient-to-r from-tw-blue to-tw-green rounded-md w-8 h-8"></div>
+              <span className="font-bold text-xl">TradeWizard</span>
+            </Link>
+          </div>
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -116,15 +133,14 @@ const Navbar = () => {
               </Link>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium hidden md:block">
-                  {profile?.username}
+                  {profile.username}
                 </span>
                 
-                {/* Replace the problematic dropdown with shadcn/ui Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Avatar className="cursor-pointer">
                       <AvatarFallback className="bg-tw-blue text-white">
-                        {profile?.username?.substring(0, 2).toUpperCase() || 'U'}
+                        {profile.username.substring(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
@@ -135,7 +151,7 @@ const Navbar = () => {
                     <Link to="/dashboard/settings">
                       <DropdownMenuItem>Settings</DropdownMenuItem>
                     </Link>
-                    {profile?.role === 'admin' && (
+                    {profile.role === 'admin' && (
                       <Link to="/dashboard/admin">
                         <DropdownMenuItem>Admin Panel</DropdownMenuItem>
                       </Link>

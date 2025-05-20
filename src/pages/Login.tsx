@@ -1,11 +1,10 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { LogIn, Eye, EyeOff } from "lucide-react";
+import { LogIn, Eye, EyeOff, Loader2 } from "lucide-react";
 
 import MainLayout from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -26,9 +25,26 @@ const formSchema = z.object({
 });
 
 const Login = () => {
-  const { signIn } = useAuth();
+  const { signIn, user, loading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  // Reset loading state if auth context is not loading
+  useEffect(() => {
+    if (!authLoading) {
+      setIsLoading(false);
+    }
+  }, [authLoading]);
+
+  // If user is already logged in, redirect to dashboard
+  useEffect(() => {
+    if (user) {
+      const intendedUrl = localStorage.getItem('intendedUrl') || '/dashboard';
+      localStorage.removeItem('intendedUrl');
+      navigate(intendedUrl);
+    }
+  }, [user, navigate]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -39,20 +55,32 @@ const Login = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (isLoading || authLoading) return; // Prevent multiple submissions
+    
     setIsLoading(true);
     try {
       await signIn(values.email, values.password);
+      // Don't navigate here - let the auth context handle it
     } catch (error) {
-      // Error is handled in the auth context
-      console.error("Login error:", error);
-    } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Reset loading state on error
+      form.reset({ email: values.email, password: "" });
     }
   };
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  // Show loading state in the layout while auth is initializing
+  if (authLoading) {
+    return (
+      <MainLayout hideFooter>
+        <div className="flex min-h-[80vh] items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-tw-blue" />
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout hideFooter>
@@ -80,6 +108,8 @@ const Login = () => {
                         <Input 
                           placeholder="you@example.com" 
                           type="email"
+                          disabled={isLoading}
+                          autoComplete="email"
                           {...field} 
                         />
                       </FormControl>
@@ -98,12 +128,15 @@ const Login = () => {
                         <div className="relative">
                           <Input 
                             placeholder="Your password" 
-                            type={showPassword ? "text" : "password"} 
+                            type={showPassword ? "text" : "password"}
+                            disabled={isLoading}
+                            autoComplete="current-password"
                             {...field} 
                           />
                           <button 
                             type="button"
                             onClick={toggleShowPassword}
+                            disabled={isLoading}
                             className="absolute right-3 top-1/2 transform -translate-y-1/2"
                           >
                             {showPassword ? (
@@ -122,7 +155,11 @@ const Login = () => {
 
               <div className="flex items-center justify-between">
                 <div className="text-sm">
-                  <Link to="/forgot-password" className="font-medium text-tw-blue hover:text-tw-blue-dark">
+                  <Link 
+                    to="/forgot-password" 
+                    className="font-medium text-tw-blue hover:text-tw-blue-dark"
+                    tabIndex={isLoading ? -1 : 0}
+                  >
                     Forgot your password?
                   </Link>
                 </div>
@@ -133,14 +170,27 @@ const Login = () => {
                 className="w-full bg-tw-blue hover:bg-tw-blue-dark"
                 disabled={isLoading}
               >
-                <LogIn className="mr-2 h-4 w-4" />
-                {isLoading ? "Signing in..." : "Sign in"}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Sign in
+                  </>
+                )}
               </Button>
               
               <div className="text-center mt-4">
                 <p className="text-sm text-gray-600">
                   Don't have an account?{" "}
-                  <Link to="/signup" className="font-medium text-tw-blue hover:text-tw-blue-dark">
+                  <Link 
+                    to="/signup" 
+                    className="font-medium text-tw-blue hover:text-tw-blue-dark"
+                    tabIndex={isLoading ? -1 : 0}
+                  >
                     Sign up
                   </Link>
                 </p>

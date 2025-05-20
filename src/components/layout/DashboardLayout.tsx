@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Bot,
@@ -31,7 +31,8 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
-  const { profile, isAdmin, signOut } = useAuth();
+  const { profile, isAdmin, signOut, loading } = useAuth();
+  const navigate = useNavigate();
   
   // User role from auth context
   const userRole = isAdmin ? 'admin' : 'user';
@@ -62,6 +63,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     }
     return location.pathname.startsWith(path) && path !== '/dashboard';
   };
+
+  // Redirect to login if profile is missing after loading
+  if (!loading && !profile) {
+    navigate('/login');
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen bg-background">

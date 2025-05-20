@@ -31,6 +31,14 @@ import TrendingBots from "./pages/marketplace/TrendingBots";
 import Leaderboard from "./pages/marketplace/Leaderboard";
 import NewReleases from "./pages/marketplace/NewReleases";
 import Settings from "./pages/Settings";
+import Builder from "./pages/Builder";
+import Sandbox from "./pages/Sandbox";
+import Signals from "./pages/Signals";
+import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Cookies from "./pages/Cookies";
 
 // Create a new QueryClient instance inside the component
 const App = () => {
@@ -157,6 +165,16 @@ const App = () => {
                   </AdminRoute>
                 }
               />
+              
+              {/* New placeholder routes */}
+              <Route path="/builder" element={<Builder />} />
+              <Route path="/sandbox" element={<Sandbox />} />
+              <Route path="/signals" element={<Signals />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/cookies" element={<Cookies />} />
               
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />
