@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { supabase, debugSession, refreshSession, getTokenKey } from '@/lib/supabase';
-import { User, Session } from '@supabase/supabase-js';
+import { createContext, useContext, useEffect, useState, ReactNode, useRef, useCallback } from 'react';
+import { supabase, debugSession, getTokenKey } from '@/lib/supabase';
+import { User, Session, AuthError } from '@supabase/supabase-js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -29,20 +29,48 @@ export type UserProfile = {
 // Create the auth context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Debounce function to prevent rapid state changes
+const debounce = <F extends (...args: any[]) => any>(func: F, wait: number): ((...args: Parameters<F>) => void) => {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+  
+  return function(...args: Parameters<F>) {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    
+    timeout = setTimeout(() => {
+      func(...args);
+    }, wait);
+  };
+};
+
 // Auth Provider component
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  // State management
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [authInitialized, setAuthInitialized] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Use refs to track state and prevent race conditions
+  const userRef = useRef<User | null>(null);
+  const mountedRef = useRef(true);
+  const initializingRef = useRef(false);
+  const authListenerRef = useRef<{unsubscribe: () => void} | null>(null);
 
   // Public pages that don't require authentication
   const publicPages = ['/', '/login', '/signup', '/features', '/pricing', '/docs', '/marketplace'];
 
-  // Fetch user profile from the database
-  const fetchUserProfile = async (userId: string): Promise<UserProfile | null> => {
+  // Fetch user profile from the database - memoized using useCallback to prevent recreating
+  const fetchUserProfile = useCallback(async (userId: string): Promise<UserProfile | null> => {
+    if (!userId) {
+      console.error('Cannot fetch profile: userId is null or empty');
+      return null;
+    }
+    
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -60,283 +88,287 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error('Exception fetching profile:', error);
       return null;
     }
-  };
+  }, []);
 
-  // Reset auth state
-  const resetAuthState = () => {
+  // Reset auth state - memoized for consistent reference
+  const resetAuthState = useCallback(() => {
+    if (!mountedRef.current) return;
+    
+    console.log('Resetting auth state');
+    userRef.current = null;
     setUser(null);
     setProfile(null);
     setIsAdmin(false);
-  };
+  }, []);
 
-  // Refresh the current session
-  const refreshSession = async () => {
+  // Refresh the current session - memoized for consistent reference
+  const refreshSession = useCallback(async () => {
+    if (initializingRef.current || !mountedRef.current) {
+      console.log('Skipping session refresh - already initializing or unmounted');
+      return;
+    }
+    
     try {
+      console.log('Refreshing session...');
       setLoading(true);
       
-      // Check for an existing session
+      // Get current session state
       const { data, error } = await supabase.auth.getSession();
       
-      if (error || !data.session) {
+      if (error) {
+        console.error('Session refresh error:', error.message);
         resetAuthState();
         return;
       }
       
+      if (!data.session) {
+        console.log('No active session found during refresh');
+        resetAuthState();
+        return;
+      }
+      
+      if (!mountedRef.current) return;
+      
       // Update user state
+      userRef.current = data.session.user;
       setUser(data.session.user);
       
       // Fetch and update profile
-      const profile = await fetchUserProfile(data.session.user.id);
-      if (profile) {
-        setProfile(profile);
-        setIsAdmin(profile.role === 'admin');
+      const userProfile = await fetchUserProfile(data.session.user.id);
+      
+      if (!mountedRef.current) return;
+      
+      if (userProfile) {
+        setProfile(userProfile);
+        setIsAdmin(userProfile.role === 'admin');
       } else {
+        console.error('No profile found for user during refresh');
         resetAuthState();
       }
     } catch (error) {
       console.error('Session refresh error:', error);
-      resetAuthState();
+      if (mountedRef.current) resetAuthState();
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
     }
-  };
+  }, [fetchUserProfile, resetAuthState]);
 
-  // Initialize auth state on component mount
+  // Initialize auth state once on component mount with improved stability
   useEffect(() => {
-    console.log('§§§§§§§§§§ AUTH PROVIDER MOUNTED §§§§§§§§§§');
-    let isMounted = true;
-
-    // CRITICAL: Function to load the user session with improved reliability
+    console.log('Auth provider mounted');
+    mountedRef.current = true;
+    
+    // Function to safely initialize auth state
     const initializeAuth = async () => {
+      // Prevent multiple initializations
+      if (initializingRef.current || !mountedRef.current) return;
+      
       try {
-        console.log('========== INITIALIZING AUTH STATE ==========');
+        console.log('Initializing auth state');
+        initializingRef.current = true;
         setLoading(true);
         
         // First check if we have a token in localStorage
         const tokenKey = getTokenKey();
         const tokenData = localStorage.getItem(tokenKey);
-        console.log(`Checking for token in localStorage (${tokenKey}):`, !!tokenData);
+        console.log(`Token in localStorage (${tokenKey}):`, !!tokenData);
         
-        if (!tokenData) {
-          console.log('No token found in localStorage');
-          resetAuthState();
-          setLoading(false);
-          return;
-        }
-        
-        // We have a token, so let's debug the session
-        await debugSession();
-        
-        // Force refresh the session first to ensure it's valid
-        console.log('Force refreshing session...');
-        const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
-        
-        // Check for refresh errors
-        if (refreshError) {
-          console.error('Error refreshing session:', refreshError.message);
-          resetAuthState();
-          setLoading(false);
-          return;
-        }
-        
-        // If we got a session back from the refresh, use it
-        if (refreshData.session) {
-          console.log('Session successfully refreshed!');
-          console.log('User:', refreshData.session.user.email);
-          console.log('Session expires at:', new Date(refreshData.session.expires_at * 1000).toLocaleString());
-          
-          if (!isMounted) return;
-          
-          // Set the user state
-          setUser(refreshData.session.user);
-          
-          // Get user profile data
-          console.log('Fetching user profile after refresh...');
-          const userProfile = await fetchUserProfile(refreshData.session.user.id);
-          
-          if (!isMounted) return;
-          
-          if (userProfile) {
-            // Set profile data
-            console.log('Profile found after refresh:', userProfile.username);
-            setProfile(userProfile);
-            setIsAdmin(userProfile.role === 'admin');
-            
-            // If the user is on the login page, redirect to dashboard
-            if (location.pathname === '/login') {
-              console.log('User already authenticated, redirecting to dashboard');
-              navigate('/dashboard');
-            }
-            
-            // Success! Session restored
-            console.log('Session successfully restored');
-          } else {
-            console.error('No profile found for authenticated user after refresh');
-            resetAuthState();
-          }
-          
-          // Session is valid, exit early
-          if (isMounted) setLoading(false);
-          return;
-        }
-        
-        // If refresh didn't work, try getSession as fallback
-        console.log('Falling back to getSession...');
+        // Always check session with Supabase regardless of localStorage
+        // since the client may have auto-refreshed the token
         const { data, error } = await supabase.auth.getSession();
         
-        if (error || !data.session) {
-          console.error('Could not get session:', error?.message || 'No session found');
+        // Handle early exit for unmounted component
+        if (!mountedRef.current) return;
+        
+        // Error checking current session
+        if (error) {
+          console.error('Error getting session:', error.message);
           resetAuthState();
-          if (isMounted) setLoading(false);
+          setAuthInitialized(true);
           return;
         }
         
-        // We have a valid session
-        console.log('Valid session found with getSession:', data.session.user.email);
+        // No active session from Supabase
+        if (!data.session) {
+          console.log('No active session found');
+          resetAuthState();
+          setAuthInitialized(true);
+          return;
+        }
         
-        if (isMounted) {
-          setUser(data.session.user);
+        // We have a valid session, update state
+        console.log('Valid session found:', data.session.user.email);
+        userRef.current = data.session.user;
+        setUser(data.session.user);
+        
+        // Fetch user profile
+        const userProfile = await fetchUserProfile(data.session.user.id);
+        
+        if (!mountedRef.current) return;
+        
+        // Set user profile data if available
+        if (userProfile) {
+          console.log('Profile found:', userProfile.username);
+          setProfile(userProfile);
+          setIsAdmin(userProfile.role === 'admin');
           
-          // Get user profile
-          console.log('Fetching user profile...');
-          const userProfile = await fetchUserProfile(data.session.user.id);
-          
-          if (!isMounted) return;
-          
-          if (userProfile) {
-            console.log('Profile found:', userProfile.username);
-            setProfile(userProfile);
-            setIsAdmin(userProfile.role === 'admin');
-            
-            // If user is on login page, redirect to dashboard
-            if (location.pathname === '/login') {
-              console.log('User already authenticated, redirecting to dashboard');
-              navigate('/dashboard');
-            }
-          } else {
-            console.error('No profile found for authenticated user');
-            resetAuthState();
+          // Redirect from login page if already authenticated
+          if (location.pathname === '/login') {
+            navigate('/dashboard');
           }
+        } else {
+          console.error('No profile found for authenticated user');
+          resetAuthState();
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
-        if (isMounted) resetAuthState();
+        if (mountedRef.current) resetAuthState();
       } finally {
-        if (isMounted) setLoading(false);
+        if (mountedRef.current) {
+          setLoading(false);
+          setAuthInitialized(true);
+          initializingRef.current = false;
+        }
       }
     };
-
-    // Initialize immediately
+    
+    // Start auth initialization
     initializeAuth();
-
+    
+    // Set up auth state change listener to handle auth events
+    const setupAuthListener = () => {
+      console.log('Setting up auth state change listener');
+      
+      if (authListenerRef.current) {
+        console.log('Cleaning up previous auth listener');
+        authListenerRef.current.unsubscribe();
+      }
+      
+      // Apply debounce to auth state changes to prevent rapid updates
+      const debouncedStateChange = debounce(async (event: string, session: Session | null) => {
+        if (!mountedRef.current) return;
+        
+        console.log(`Auth state changed: ${event}`, session ? `User: ${session.user.email}` : 'No session');
+        
+        if (event === 'SIGNED_IN' && session) {
+          console.log('*** SIGN IN EVENT DETECTED ***');
+          userRef.current = session.user;
+          setUser(session.user);
+          
+          try {
+            // Fetch profile for the signed-in user
+            setLoading(true);
+            const userProfile = await fetchUserProfile(session.user.id);
+            
+            if (!mountedRef.current) return;
+            
+            if (userProfile) {
+              setProfile(userProfile);
+              setIsAdmin(userProfile.role === 'admin');
+              
+              // Only redirect from login page
+              if (location.pathname === '/login') {
+                navigate('/dashboard');
+              }
+            } else {
+              console.error('No profile found after sign in');
+              resetAuthState();
+              toast.error('Failed to load user profile');
+            }
+          } catch (error) {
+            console.error('Error processing sign in event:', error);
+            if (mountedRef.current) resetAuthState();
+          } finally {
+            if (mountedRef.current) setLoading(false);
+          }
+        } else if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+          console.log('*** SIGN OUT EVENT DETECTED ***');
+          resetAuthState();
+          
+          // Redirect from protected pages only
+          if (!publicPages.includes(location.pathname)) {
+            navigate('/login');
+          }
+        }
+      }, 100); // 100ms debounce for auth state changes
+      
+      const { data } = supabase.auth.onAuthStateChange((event, session) => {
+        debouncedStateChange(event, session);
+      });
+      
+      authListenerRef.current = data.subscription;
+    };
+    
+    // Set up the auth listener
+    setupAuthListener();
+    
     // Clean up on unmount
     return () => {
       console.log('Auth provider unmounting');
-      isMounted = false;
-    };
-  }, [navigate, location.pathname]); // Only run on initial mount
-
-  // Set up auth state change listener separately to avoid conflicts
-  useEffect(() => {
-    console.log('Setting up auth state change listener');
-    
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(`Auth state changed: ${event}`, session ? `User: ${session.user.email}` : 'No session');
+      mountedRef.current = false;
       
-      if (event === 'SIGNED_IN' && session) {
-        console.log('*** SIGN IN EVENT DETECTED ***');
-        setUser(session.user);
-        
-        try {
-          // Always fetch profile when signed in
-          setLoading(true);
-          const userProfile = await fetchUserProfile(session.user.id);
-          
-          if (userProfile) {
-            console.log('Profile loaded in auth listener:', userProfile.username);
-            setProfile(userProfile);
-            setIsAdmin(userProfile.role === 'admin');
-            
-            // Only redirect if on login page
-            if (location.pathname === '/login') {
-              console.log('Redirecting to dashboard after successful sign in');
-              navigate('/dashboard');
-            }
-          } else {
-            console.error('No profile found after sign in event');
-            resetAuthState();
-            toast.error('Failed to load user profile');
-          }
-        } catch (error) {
-          console.error('Error processing sign in event:', error);
-          resetAuthState();
-        } finally {
-          setLoading(false);
-        }
-      } else if (event === 'SIGNED_OUT') {
-        console.log('*** SIGN OUT EVENT DETECTED ***');
-        resetAuthState();
-        
-        // Only redirect if on a protected page
-        if (!publicPages.includes(location.pathname)) {
-          navigate('/login');
-        }
+      // Clean up auth listener
+      if (authListenerRef.current) {
+        console.log('Unsubscribing from auth state changes');
+        authListenerRef.current.unsubscribe();
+        authListenerRef.current = null;
       }
-    });
-    
-    return () => {
-      console.log('Unsubscribing from auth state changes');
-      subscription.unsubscribe();
     };
-  }, [navigate, location.pathname, publicPages]);
+  }, []); // Empty dependency array ensures this only runs once on mount
 
   // Sign in user with guaranteed session persistence
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
-      console.log('⚡⚡⚡ SIGN IN ATTEMPT ⚡⚡⚡');
-      console.log('Email:', email);
+      console.log('⚡ SIGN IN ATTEMPT');
       setLoading(true);
+      
+      // Don't allow sign in attempts during initialization
+      if (initializingRef.current) {
+        throw new Error('Authentication system is still initializing. Please try again.');
+      }
       
       // Make sure we start with a clean state
       resetAuthState();
       
-      // CRITICAL: First sign out completely to avoid conflicts
-      // This is necessary to ensure we're starting with a clean slate
+      // Clear any existing sessions to prevent conflicts
       console.log('Clearing any existing sessions...');
       await supabase.auth.signOut({ scope: 'global' });
       
-      // Wait briefly to ensure signout completes
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Short delay to ensure clean slate
+      await new Promise(resolve => setTimeout(resolve, 150));
       
-      // Now attempt the sign in
-      console.log('Making auth request to Supabase...');
+      // Attempt to sign in
+      console.log('Authenticating with Supabase...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
+        // Supabase handles persistence automatically with browser localStorage
       });
       
+      if (!mountedRef.current) return;
+      
+      // Handle authentication errors
       if (error) {
-        console.error('Supabase auth error:', error);
+        console.error('Authentication error:', error.message);
         throw error;
       }
       
       if (!data.user || !data.session) {
-        console.error('Missing user or session data from Supabase');
+        console.error('Missing user or session data');
         throw new Error('Login failed: missing user data');
       }
       
-      console.log('Authentication successful!');
-      console.log('User:', data.user.email);
-      console.log('Session expires at:', new Date(data.session.expires_at * 1000).toLocaleString());
+      // Verify successful authentication
+      console.log('Authentication successful: ' + data.user.email);
       
-      // CRITICAL: Check if token was properly stored in localStorage
-      // This is the key to fixing the session persistence issue
+      // Manually verify token storage for debugging
       const tokenKey = getTokenKey();
       const savedToken = localStorage.getItem(tokenKey);
       
       if (!savedToken) {
-        // If token is missing, explicitly set it
-        console.log('Token not found in localStorage, manually storing it');
+        console.warn('Token not found in localStorage after authentication');
+        
+        // Attempt manual token storage as fallback
         try {
           const tokenData = {
             access_token: data.session.access_token,
@@ -344,51 +376,58 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             expires_at: data.session.expires_at
           };
           localStorage.setItem(tokenKey, JSON.stringify(tokenData));
+          console.log('Manually stored authentication token');
         } catch (e) {
           console.error('Failed to manually set token:', e);
         }
       } else {
-        console.log('Token verified in localStorage');
+        console.log('Token successfully stored in localStorage');
       }
       
-      // Set user data in state
+      // Update user state
+      userRef.current = data.user;
       setUser(data.user);
       
-      // Fetch user profile data
+      // Fetch user profile
       console.log('Fetching user profile...');
       const userProfile = await fetchUserProfile(data.user.id);
+      
+      if (!mountedRef.current) return;
       
       if (!userProfile) {
         console.error('Could not find user profile after login');
         throw new Error('Could not find user profile');
       }
       
-      // Set profile data
-      console.log('Setting profile data:', userProfile.username);
+      // Update profile state
       setProfile(userProfile);
       setIsAdmin(userProfile.role === 'admin');
       
-      // Double-check session persistence
-      const sessionCheck = await supabase.auth.getSession();
-      console.log('Session verification:', sessionCheck.data.session ? 'Valid' : 'Missing');
-      
       // Show success message and redirect
       toast.success('Logged in successfully');
-      console.log('Navigating to dashboard...');
       navigate('/dashboard');
       console.log('⚡ LOGIN COMPLETE ⚡');
       
     } catch (error: any) {
-      console.error('Login process failed:', error.message || 'Unknown error');
-      resetAuthState();
-      toast.error(error.message || 'Failed to sign in');
+      console.error('Login failed:', error.message || 'Unknown error');
+      if (mountedRef.current) {
+        resetAuthState();
+        toast.error(error.message || 'Failed to sign in');
+      }
+      throw error; // Rethrow so the login component can handle it
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [fetchUserProfile, resetAuthState, navigate]);
 
-  // Sign up user
-  const signUp = async (email: string, password: string, username: string) => {
+  // Sign up user with improved error handling
+  const signUp = useCallback(async (email: string, password: string, username: string) => {
+    if (initializingRef.current) {
+      throw new Error('Authentication system is still initializing. Please try again.');
+    }
+    
     try {
       setLoading(true);
       
@@ -400,6 +439,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           data: { username }
         }
       });
+      
+      if (!mountedRef.current) return;
       
       if (error) throw error;
       
@@ -420,27 +461,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         ]);
       
+      if (!mountedRef.current) return;
+      
       if (profileError) throw profileError;
       
       toast.success('Account created successfully!');
       navigate('/login');
     } catch (error: any) {
       console.error('Signup error:', error.message);
-      toast.error(error.message || 'Failed to create account');
+      if (mountedRef.current) {
+        toast.error(error.message || 'Failed to create account');
+      }
       throw error;
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [navigate]);
 
-  // Sign out user with improved reliability
-  const signOut = async () => {
+  // Sign out user with improved reliability and cleanup
+  const signOut = useCallback(async () => {
     try {
       console.log('Signing out user...');
       setLoading(true);
       
-      // Execute the sign out
-      const { error } = await supabase.auth.signOut();
+      // Execute the sign out with global scope to ensure complete logout
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
+      
+      if (!mountedRef.current) return;
       
       if (error) {
         console.error('Supabase sign out error:', error.message);
@@ -450,16 +499,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Reset auth state regardless of response
       resetAuthState();
       
-      // Clear any local storage items related to auth as a fallback
-      localStorage.removeItem('sb-auth-token');
-      localStorage.removeItem('supabase-auth-token');
+      // Clear tokens from localStorage to ensure complete logout
+      const tokenKey = getTokenKey();
+      localStorage.removeItem(tokenKey);
       
-      // Verify logout worked
-      const sessionCheck = await supabase.auth.getSession();
-      if (sessionCheck.data.session) {
-        console.warn('Session still exists after logout!');
-      } else {
-        console.log('Session successfully cleared');
+      // Extra token cleanup for older versions of Supabase client
+      try {
+        localStorage.removeItem('sb-auth-token');
+        localStorage.removeItem('supabase-auth-token');
+      } catch (e) {
+        console.error('Error clearing legacy tokens:', e);
       }
       
       // Show success and redirect
@@ -468,22 +517,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error: any) {
       console.error('Sign out process failed:', error.message || 'Unknown error');
       
-      // Force reset auth state even on error
-      resetAuthState();
-      
-      // Try harder to clear session
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-      } catch (e) {
-        console.error('Forced sign out also failed:', e);
+      if (mountedRef.current) {
+        // Force reset auth state even on error
+        resetAuthState();
+        toast.error('Error during sign out, but session has been cleared');
+        navigate('/');
       }
-      
-      toast.error('Error during sign out, but session has been cleared');
-      navigate('/');
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [navigate, resetAuthState]);
 
   const value = {
     user,

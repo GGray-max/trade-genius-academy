@@ -92,9 +92,9 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/privacy" className="text-gray-600 hover:text-gray-900">
+                <a href="/legal/privacy-policy.html" className="text-gray-600 hover:text-gray-900">
                   Privacy Policy
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -104,19 +104,19 @@ const Footer = () => {
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link to="/terms" className="text-gray-600 hover:text-gray-900">
+                <a href="/legal/terms-of-service.html" className="text-gray-600 hover:text-gray-900">
                   Terms of Service
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/privacy" className="text-gray-600 hover:text-gray-900">
+                <a href="/legal/privacy-policy.html" className="text-gray-600 hover:text-gray-900">
                   Privacy Policy
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/cookies" className="text-gray-600 hover:text-gray-900">
+                <a href="/legal/cookie-policy.html" className="text-gray-600 hover:text-gray-900">
                   Cookie Policy
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
