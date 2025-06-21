@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - TradeWizard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --tw-blue: #2563eb;
+            --tw-blue-dark: #1e40af;
+            --tw-green: #10b981;
+            --tw-bg-light: #f9fafb;
+            --tw-text-primary: #111827;
+            --tw-text-secondary: #4b5563;
+            --tw-border-color: #e5e7eb;
+            --tw-header-height: 70px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--tw-text-primary);
+            background-color: var(--tw-bg-light);
+            padding-top: var(--tw-header-height);
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--tw-header-height);
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 100;
+        }
+        .header-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--tw-text-primary);
+        }
+        .logo-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--tw-blue) 0%, var(--tw-green) 100%);
+            margin-right: 10px;
+        }
+        .logo-text {
+            font-weight: 700;
+            font-size: 20px;
+        }
+        .nav {
+            display: flex;
+            gap: 24px;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: var(--tw-text-secondary);
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--tw-blue);
+        }
+        .nav-link.active {
+            color: var(--tw-blue);
+            font-weight: 600;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 24px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .document-header {
+            padding: 40px 40px 20px 40px;
+            border-bottom: 1px solid var(--tw-border-color);
+        }
+        .content {
+            padding: 40px;
+        }
+        h1 {
+            color: var(--tw-text-primary);
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        h2 {
+            color: var(--tw-text-primary);
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--tw-border-color);
+        }
+        h3 {
+            color: var(--tw-text-primary);
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        p, li {
+            font-size: 16px;
+            color: var(--tw-text-secondary);
+            margin-bottom: 16px;
+        }
+        ul, ol {
+            padding-left: 24px;
+            margin-bottom: 24px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .last-updated {
+            font-style: italic;
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .highlights {
+            background-color: #f0f9ff;
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid var(--tw-blue);
+        }
+        .contact-info {
+            background-color: #f8fafc;
+            padding: 24px;
+            border-radius: 8px;
+            margin-top: 40px;
+            border-left: 4px solid var(--tw-blue);
+        }
+        .legal-nav {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 30px 0;
+            padding: 16px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+        }
+        .legal-nav-link {
+            text-decoration: none;
+            color: var(--tw-text-secondary);
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .legal-nav-link:hover {
+            background-color: #e5e7eb;
+        }
+        .legal-nav-link.active {
+            background-color: var(--tw-blue);
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid var(--tw-border-color);
+            padding: 12px 16px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: var(--tw-text-primary);
+        }
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        .back-to-home {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: var(--tw-blue);
+            font-weight: 500;
+        }
+        .back-to-home:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--tw-text-secondary);
+            font-size: 14px;
+        }
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+            .container {
+                margin: 20px auto;
+                padding: 0 16px;
+            }
+            .document-header, .content {
+                padding: 24px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+            h2 {
+                font-size: 20px;
+            }
+            .legal-nav {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <div class="logo-icon"></div>
+                <span class="logo-text">TradeWizard</span>
+            </a>
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/features" class="nav-link">Features</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/docs" class="nav-link">Docs</a>
+                <a href="/marketplace" class="nav-link">Marketplace</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="document-header">
+            <h1>Privacy Policy</h1>
+            <div class="last-updated">Last Updated: May 21, 2025</div>
+        </div>
+        
+        <div class="legal-nav">
+            <a href="/legal/terms-of-service.html" class="legal-nav-link">Terms of Service</a>
+            <a href="/legal/privacy-policy.html" class="legal-nav-link active">Privacy Policy</a>
+            <a href="/legal/cookie-policy.html" class="legal-nav-link">Cookie Policy</a>
+        </div>
+        
+        <div class="content">
+
+    <div class="highlights">
+        <h3>Privacy Policy Highlights</h3>
+        <p>This summary provides key points from our Privacy Policy, but doesn't replace the full policy below:</p>
+        <ul>
+            <li>We collect personal information when you register, use our platform, or contact us</li>
+            <li>We use your data to provide our services, improve our platform, and communicate with you</li>
+            <li>We share your information with service providers and partners who help us provide our services</li>
+            <li>We implement technical and organizational measures to protect your data</li>
+            <li>You have rights to access, correct, and delete your personal information</li>
+            <li>We use cookies and similar technologies to enhance your experience</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>1. Introduction</h2>
+        <p>TradeWizard ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our trading platform and services, including any mobile applications (collectively, the "Services").</p>
+        <p>Please read this Privacy Policy carefully. By accessing or using our Services, you acknowledge that you have read, understood, and agree to be bound by this Privacy Policy. If you do not agree with our policies and practices, please do not use our Services.</p>
+    </div>
+
+    <div class="section">
+        <h2>2. Information We Collect</h2>
+        
+        <h3>2.1 Personal Data You Provide to Us</h3>
+        <p>We collect personal information that you voluntarily provide to us when you:</p>
+        <ul>
+            <li><strong>Register for an account:</strong> Name, email address, password, username</li>
+            <li><strong>Complete your profile:</strong> Profile picture, biographical information, preferences</li>
+            <li><strong>Subscribe to our services:</strong> Billing information, payment details</li>
+            <li><strong>Connect third-party platforms:</strong> API keys, account credentials (encrypted)</li>
+            <li><strong>Contact us:</strong> Information provided in your communications with us</li>
+            <li><strong>Participate in surveys or promotions:</strong> Responses and contact information</li>
+        </ul>
+
+        <h3>2.2 Information Automatically Collected</h3>
+        <p>When you use our Services, we automatically collect certain information, including:</p>
+        <ul>
+            <li><strong>Usage data:</strong> Pages viewed, features used, time spent on platform, trading activity</li>
+            <li><strong>Device information:</strong> IP address, browser type, operating system, device information</li>
+            <li><strong>Location data:</strong> General location based on IP address</li>
+            <li><strong>Cookies and similar technologies:</strong> As described in our <a href="cookie-policy.html">Cookie Policy</a></li>
+        </ul>
+
+        <h3>2.3 Information from Third Parties</h3>
+        <p>We may receive information about you from:</p>
+        <ul>
+            <li><strong>Trading platforms and exchanges:</strong> When you connect your accounts</li>
+            <li><strong>Identity verification services:</strong> For KYC (Know Your Customer) compliance</li>
+            <li><strong>Analytics providers:</strong> To help us understand usage patterns</li>
+            <li><strong>Social media platforms:</strong> If you choose to link your social media accounts</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>3. How We Use Your Information</h2>
+        <p>We use your personal information for the following purposes:</p>
+        
+        <table>
+            <tr>
+                <th>Purpose</th>
+                <th>Details</th>
+                <th>Legal Basis (for EU/EEA/UK)</th>
+            </tr>
+            <tr>
+                <td>Providing our Services</td>
+                <td>To create and manage your account, process transactions, enable trading features, and maintain our platform</td>
+                <td>Performance of a contract</td>
+            </tr>
+            <tr>
+                <td>Communication</td>
+                <td>To send necessary information about your account, respond to inquiries, and provide customer support</td>
+                <td>Performance of a contract, Legitimate interests</td>
+            </tr>
+            <tr>
+                <td>Platform improvement</td>
+                <td>To analyze usage patterns, troubleshoot issues, develop new features, and enhance user experience</td>
+                <td>Legitimate interests</td>
+            </tr>
+            <tr>
+                <td>Security and fraud prevention</td>
+                <td>To detect and prevent unauthorized access, fraud, and other illegal activities</td>
+                <td>Legal obligation, Legitimate interests</td>
+            </tr>
+            <tr>
+                <td>Marketing</td>
+                <td>To send promotional communications about our services (with your consent where required)</td>
+                <td>Consent, Legitimate interests</td>
+            </tr>
+            <tr>
+                <td>Legal compliance</td>
+                <td>To comply with applicable laws, regulations, and legal processes</td>
+                <td>Legal obligation</td>
+            </tr>
+        </table>
+        
+        <p>We will retain your personal information only for as long as necessary to fulfill the purposes outlined in this Privacy Policy, and to comply with our legal obligations.</p>
+    </div>
+
+    <div class="section">
+        <h2>4. How We Share Your Information</h2>
+        <p>We may share your personal information with the following categories of recipients:</p>
+        
+        <h3>4.1 Service Providers</h3>
+        <p>We share information with third-party vendors, consultants, and other service providers who need access to such information to carry out work on our behalf, including:</p>
+        <ul>
+            <li>Cloud hosting and data storage providers</li>
+            <li>Payment processors</li>
+            <li>Customer support services</li>
+            <li>Analytics and performance monitoring services</li>
+            <li>Identity verification services</li>
+        </ul>
+        <p>All service providers are bound by contractual obligations to keep personal information confidential and use it only for the purposes for which we disclose it to them.</p>
+        
+        <h3>4.2 Third-Party Trading Platforms</h3>
+        <p>If you choose to connect your TradeWizard account with third-party trading platforms or exchanges, we will share information necessary to facilitate the connection and functionality of our integrated services.</p>
+        
+        <h3>4.3 Legal Requirements</h3>
+        <p>We may disclose your information when we believe in good faith that such disclosure is necessary to:</p>
+        <ul>
+            <li>Comply with applicable laws, regulations, legal processes, or governmental requests</li>
+            <li>Protect our rights, privacy, safety, or property</li>
+            <li>Protect the rights, privacy, safety, or property of our users or others</li>
+            <li>Detect, prevent, or address fraud, security, or technical issues</li>
+        </ul>
+        
+        <h3>4.4 Business Transfers</h3>
+        <p>If we are involved in a merger, acquisition, financing, reorganization, bankruptcy, or sale of company assets, your information may be transferred as part of that transaction. We will notify you of any such change in ownership or control of your personal information.</p>
+        
+        <h3>4.5 With Your Consent</h3>
+        <p>We may share your information with third parties when you have given us your consent to do so.</p>
+        
+        <h3>4.6 Aggregated and De-identified Information</h3>
+        <p>We may share aggregated or de-identified information, which cannot reasonably be used to identify you, for various purposes including market analysis, improving our services, and developing new features.</p>
+    </div>
+
+    <div class="section">
+        <h2>5. Data Security</h2>
+        <p>We implement appropriate technical and organizational measures to protect the security of your personal information, including:</p>
+        <ul>
+            <li>Encryption of sensitive information in transit and at rest</li>
+            <li>Secure access controls for our systems and databases</li>
+            <li>Regular security assessments and testing</li>
+            <li>Employee training on data protection practices</li>
+        </ul>
+        <p>However, no method of transmission over the Internet or electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your personal information, we cannot guarantee its absolute security.</p>
+    </div>
+
+    <div class="section">
+        <h2>6. International Data Transfers</h2>
+        <p>We are based in [Your Country], and your information may be processed in countries where we operate or where our service providers are located. These countries may have different data protection laws than your country of residence.</p>
+        <p>If you are located in the European Economic Area (EEA), United Kingdom, or Switzerland, we ensure that transfers of your personal information to countries outside these regions are made in accordance with applicable data protection laws, including through the use of Standard Contractual Clauses or other appropriate transfer mechanisms.</p>
+    </div>
+
+    <div class="section">
+        <h2>7. Your Privacy Rights</h2>
+        <p>Depending on your location, you may have certain rights regarding your personal information. These may include:</p>
+        
+        <h3>7.1 For All Users</h3>
+        <ul>
+            <li><strong>Access:</strong> You can request a copy of the personal information we hold about you.</li>
+            <li><strong>Correction:</strong> You can request that we correct inaccurate or incomplete information about you.</li>
+            <li><strong>Deletion:</strong> You can request that we delete your personal information in certain circumstances.</li>
+            <li><strong>Marketing Choices:</strong> You can opt out of marketing communications at any time by following the unsubscribe instructions included in our emails or contacting us directly.</li>
+        </ul>
+        
+        <h3>7.2 For EEA, UK, and California Residents</h3>
+        <p>You may have additional rights, including:</p>
+        <ul>
+            <li><strong>Data Portability:</strong> You can request a copy of your data in a structured, commonly used, and machine-readable format.</li>
+            <li><strong>Restriction of Processing:</strong> You can request that we restrict the processing of your information under certain circumstances.</li>
+            <li><strong>Objection:</strong> You can object to the processing of your personal data in certain circumstances.</li>
+            <li><strong>Withdrawal of Consent:</strong> Where processing is based on consent, you can withdraw your consent at any time.</li>
+            <li><strong>Do Not Sell:</strong> California residents can opt out of the "sale" of their personal information as defined by the CCPA.</li>
+        </ul>
+        
+        <h3>7.3 How to Exercise Your Rights</h3>
+        <p>To exercise your privacy rights, you can:</p>
+        <ul>
+            <li>Use the privacy controls in your account settings</li>
+            <li>Contact us at privacy@tradewizard.com</li>
+            <li>Submit a request through our <a href="/privacy-request">Privacy Request Form</a></li>
+        </ul>
+        <p>We will respond to your request within the timeframe required by applicable law (typically 30 days). We may need to verify your identity before processing your request.</p>
+        
+        <h3>7.4 No Discrimination</h3>
+        <p>We will not discriminate against you for exercising any of your privacy rights. This means we will not:</p>
+        <ul>
+            <li>Deny you goods or services</li>
+            <li>Charge you different prices or rates for goods or services</li>
+            <li>Provide you with a different level or quality of goods or services</li>
+            <li>Suggest that you will receive a different price or rate for goods or services or a different level or quality of goods or services</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>8. Children's Privacy</h2>
+        <p>Our Services are not directed to individuals under the age of 18. We do not knowingly collect personal information from children. If you are a parent or guardian and believe that your child has provided us with personal information, please contact us. If we become aware that we have collected personal information from a child without verification of parental consent, we will take steps to delete that information.</p>
+    </div>
+
+    <div class="section">
+        <h2>9. Third-Party Links and Services</h2>
+        <p>Our Services may contain links to third-party websites, applications, or services that are not owned or controlled by TradeWizard. We are not responsible for the privacy practices of such third parties. We encourage you to review the privacy policies of any third-party sites or services before providing any information to them.</p>
+    </div>
+
+    <div class="section">
+        <h2>10. Cookies and Similar Technologies</h2>
+        <p>We use cookies and similar tracking technologies to track activity on our Services and to hold certain information. For more information about our use of cookies, please see our <a href="cookie-policy.html">Cookie Policy</a>.</p>
+    </div>
+
+    <div class="section">
+        <h2>11. Changes to This Privacy Policy</h2>
+        <p>We may update this Privacy Policy from time to time. The updated version will be indicated by an updated "Last Updated" date at the top of this page. If we make material changes to this Privacy Policy, we will provide notice through our Services or by other means, such as email. We encourage you to review this Privacy Policy frequently to stay informed about how we are protecting your information.</p>
+    </div>
+
+    <div class="contact-info">
+        <h2>12. Contact Us</h2>
+        <p>If you have any questions or concerns about this Privacy Policy or our privacy practices, please contact us at:</p>
+        <p>Email: privacy@tradewizard.com</p>
+        <p>Address: [Your Company Address]</p>
+        <p>Data Protection Officer: dpo@tradewizard.com</p>
+        <p>If you are located in the European Union, you also have the right to lodge a complaint with your local data protection authority.</p>
+    </div>
+
+            <a href="/" class="back-to-home">← Back to Homepage</a>
+        </div> <!-- End of content -->
+    </div> <!-- End of container -->
+
+    <footer class="footer">
+        <p>&copy; 2025 TradeWizard. All rights reserved.</p>
+    </footer>
+</body>
+</html>

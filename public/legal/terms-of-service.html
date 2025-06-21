@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - TradeWizard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --tw-blue: #2563eb;
+            --tw-blue-dark: #1e40af;
+            --tw-green: #10b981;
+            --tw-bg-light: #f9fafb;
+            --tw-text-primary: #111827;
+            --tw-text-secondary: #4b5563;
+            --tw-border-color: #e5e7eb;
+            --tw-header-height: 70px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--tw-text-primary);
+            background-color: var(--tw-bg-light);
+            padding-top: var(--tw-header-height);
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--tw-header-height);
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 100;
+        }
+        .header-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--tw-text-primary);
+        }
+        .logo-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--tw-blue) 0%, var(--tw-green) 100%);
+            margin-right: 10px;
+        }
+        .logo-text {
+            font-weight: 700;
+            font-size: 20px;
+        }
+        .nav {
+            display: flex;
+            gap: 24px;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: var(--tw-text-secondary);
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--tw-blue);
+        }
+        .nav-link.active {
+            color: var(--tw-blue);
+            font-weight: 600;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 24px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .document-header {
+            padding: 40px 40px 20px 40px;
+            border-bottom: 1px solid var(--tw-border-color);
+        }
+        .content {
+            padding: 40px;
+        }
+        h1 {
+            color: var(--tw-text-primary);
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        h2 {
+            color: var(--tw-text-primary);
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--tw-border-color);
+        }
+        h3 {
+            color: var(--tw-text-primary);
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        p, li {
+            font-size: 16px;
+            color: var(--tw-text-secondary);
+            margin-bottom: 16px;
+        }
+        ul, ol {
+            padding-left: 24px;
+            margin-bottom: 24px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .last-updated {
+            font-style: italic;
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .contact-info {
+            background-color: #f8fafc;
+            padding: 24px;
+            border-radius: 8px;
+            margin-top: 40px;
+            border-left: 4px solid var(--tw-blue);
+        }
+        .legal-nav {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 30px 0;
+            padding: 16px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+        }
+        .legal-nav-link {
+            text-decoration: none;
+            color: var(--tw-text-secondary);
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .legal-nav-link:hover {
+            background-color: #e5e7eb;
+        }
+        .legal-nav-link.active {
+            background-color: var(--tw-blue);
+            color: white;
+        }
+        .back-to-home {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: var(--tw-blue);
+            font-weight: 500;
+        }
+        .back-to-home:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--tw-text-secondary);
+            font-size: 14px;
+        }
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+            .container {
+                margin: 20px auto;
+                padding: 0 16px;
+            }
+            .document-header, .content {
+                padding: 24px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+            h2 {
+                font-size: 20px;
+            }
+            .legal-nav {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <div class="logo-icon"></div>
+                <span class="logo-text">TradeWizard</span>
+            </a>
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/features" class="nav-link">Features</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/docs" class="nav-link">Docs</a>
+                <a href="/marketplace" class="nav-link">Marketplace</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="document-header">
+            <h1>Terms of Service</h1>
+            <div class="last-updated">Last Updated: May 21, 2025</div>
+        </div>
+        
+        <div class="legal-nav">
+            <a href="/legal/terms-of-service.html" class="legal-nav-link active">Terms of Service</a>
+            <a href="/legal/privacy-policy.html" class="legal-nav-link">Privacy Policy</a>
+            <a href="/legal/cookie-policy.html" class="legal-nav-link">Cookie Policy</a>
+        </div>
+        
+        <div class="content">
+
+    <div class="section">
+        <h2>1. Introduction</h2>
+        <p>Welcome to TradeWizard. By accessing or using our platform, you agree to be bound by these Terms of Service ("Terms"). Please read these Terms carefully before using our services. If you do not agree with any part of these Terms, you must not use our platform.</p>
+        <p>TradeWizard provides tools for trading strategy development, backtesting, and implementation. Our services are designed to assist in trading activities but do not guarantee profits or investment success.</p>
+    </div>
+
+    <div class="section">
+        <h2>2. Account Registration and Responsibilities</h2>
+        <p>To access certain features of TradeWizard, you must create an account. When you create an account, you agree to:</p>
+        <ul>
+            <li>Provide accurate, current, and complete information</li>
+            <li>Maintain and promptly update your account information</li>
+            <li>Keep your password secure and confidential</li>
+            <li>Accept responsibility for all activities that occur under your account</li>
+            <li>Notify us immediately of any unauthorized use of your account</li>
+        </ul>
+        <p>You must be at least 18 years old to create an account. Accounts registered by bots or automated methods are not permitted.</p>
+        <p>We reserve the right to suspend or terminate accounts that violate our Terms or if we determine, in our sole discretion, that such action is necessary to protect our platform, users, or third parties.</p>
+    </div>
+
+    <div class="section">
+        <h2>3. Bot-Builder Limitations and Restrictions</h2>
+        <p>TradeWizard offers tools to create automated trading strategies ("bots"). Users of these tools agree to the following limitations:</p>
+        <ul>
+            <li>Bots created using our platform are for personal or authorized commercial use only</li>
+            <li>You are fully responsible for the performance, behavior, and consequences of any bot you create</li>
+            <li>You may not develop bots designed to manipulate markets, exploit platform vulnerabilities, or engage in illegal activities</li>
+            <li>TradeWizard does not guarantee the profitability or effectiveness of bots created on our platform</li>
+            <li>We reserve the right to limit or restrict bot functionality if we determine it is necessary to maintain platform integrity or comply with legal requirements</li>
+            <li>Trading bots must be executed in accordance with all applicable laws and regulations governing securities, commodities, and financial instruments</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>4. Third-Party Platform Compatibility</h2>
+        <p>TradeWizard offers integration with various third-party trading platforms and exchanges. Regarding these integrations:</p>
+        <ul>
+            <li>We do not guarantee continuous compatibility with any third-party platform</li>
+            <li>Third-party platforms may change their APIs, terms, or functionality at any time, which may affect compatibility</li>
+            <li>You are responsible for complying with the terms and conditions of any third-party platform you connect to via TradeWizard</li>
+            <li>TradeWizard is not affiliated with, endorsed by, or officially connected with any third-party trading platforms we integrate with, unless explicitly stated</li>
+            <li>We are not liable for any losses or damages resulting from the use of third-party platforms or their integration with our service</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>5. Payment Terms and Subscription</h2>
+        <p>TradeWizard offers various subscription plans with different features and pricing. By subscribing to our paid services:</p>
+        <ul>
+            <li>You agree to pay all fees in accordance with the pricing and terms presented at the time of purchase</li>
+            <li>Subscription fees are charged in advance on a monthly or annual basis, depending on your selected plan</li>
+            <li>Subscriptions automatically renew unless canceled at least 24 hours before the renewal date</li>
+            <li>You can cancel your subscription at any time through your account settings</li>
+            <li>We do not offer refunds for partial subscription periods unless required by law</li>
+            <li>We reserve the right to change our pricing with reasonable notice before the next billing cycle</li>
+            <li>Failure to pay fees may result in suspension or termination of your account</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>6. User Restrictions and Prohibited Activities</h2>
+        <p>When using TradeWizard, you agree not to:</p>
+        <ul>
+            <li>Violate any applicable laws, regulations, or third-party rights</li>
+            <li>Use our platform for any illegal purposes or to promote illegal activities</li>
+            <li>Attempt to gain unauthorized access to any part of our platform or other users' accounts</li>
+            <li>Interfere with or disrupt the integrity or performance of our platform</li>
+            <li>Create or use bots designed to manipulate markets or engage in fraudulent activities</li>
+            <li>Share your account credentials with others or allow multiple users to access a single account</li>
+            <li>Scrape, data-mine, or extract data from our platform without explicit written permission</li>
+            <li>Use our platform to distribute malware, spyware, or other harmful code</li>
+            <li>Engage in any activity that places an unreasonable load on our infrastructure</li>
+            <li>Misrepresent your identity or affiliation with any person or organization</li>
+        </ul>
+        <p>Violation of these restrictions may result in immediate termination of your account and potential legal action.</p>
+    </div>
+
+    <div class="section">
+        <h2>7. Intellectual Property Rights</h2>
+        <p>TradeWizard and its content, features, and functionality are owned by us and are protected by copyright, trademark, and other intellectual property laws.</p>
+        <p>You may not reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, or transmit any of our materials, except as follows:</p>
+        <ul>
+            <li>Your computer may temporarily store copies in RAM incidental to accessing and viewing those materials</li>
+            <li>You may store files that are automatically cached by your web browser for display enhancement</li>
+            <li>You may print or download one copy of a reasonable number of pages for your personal, non-commercial use</li>
+            <li>If we provide social media features, you may take actions as are enabled by such features</li>
+        </ul>
+        <p>Regarding bots and strategies you create using our platform:</p>
+        <ul>
+            <li>You retain ownership of the trading strategies and logic you develop</li>
+            <li>You grant us a non-exclusive license to use, store, and process your bots and strategies as necessary to provide our services</li>
+            <li>We do not claim ownership over the intellectual property of your custom trading strategies</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>8. Disclaimers and Limitations of Liability</h2>
+        <h3>8.1 No Investment Advice</h3>
+        <p>TradeWizard provides tools for trading strategy development and implementation but does not provide investment advice. The information, bots, and strategies available on our platform are for informational purposes only and should not be considered financial advice. You should consult with a financial professional before making investment decisions.</p>
+        
+        <h3>8.2 Trading Risks</h3>
+        <p>Trading in financial markets involves substantial risk of loss and is not suitable for all investors. You are solely responsible for your trading decisions and the risks associated with them. Past performance of any trading system or methodology is not necessarily indicative of future results.</p>
+        
+        <h3>8.3 "As Is" Basis</h3>
+        <p>Our platform is provided on an "as is" and "as available" basis, without any warranties of any kind, either express or implied. We do not guarantee that our platform will be uninterrupted, error-free, or completely secure.</p>
+        
+        <h3>8.4 Limitation of Liability</h3>
+        <p>To the fullest extent permitted by law, TradeWizard and its officers, directors, employees, and agents shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or business opportunities, resulting from your use of our platform, any content on our platform, or any bots or strategies developed using our platform, even if we have been advised of the possibility of such damages.</p>
+        
+        <h3>8.5 Cap on Liability</h3>
+        <p>In no event shall our total liability to you for all claims arising from or related to your use of our platform exceed the amount paid by you to TradeWizard during the twelve (12) months preceding the event giving rise to the liability, or one hundred dollars ($100) if you have not made any payments to us.</p>
+    </div>
+
+    <div class="section">
+        <h2>9. Indemnification</h2>
+        <p>You agree to defend, indemnify, and hold harmless TradeWizard and its officers, directors, employees, and agents from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to:</p>
+        <ul>
+            <li>Your violation of these Terms</li>
+            <li>Your use of our platform, including any bots or strategies you develop</li>
+            <li>Your violation of any third-party rights</li>
+            <li>Any trading or investment decisions you make based on our platform</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>10. Modifications to Terms</h2>
+        <p>We reserve the right to modify these Terms at any time. If we make material changes, we will provide notice through our platform or by other means. Your continued use of our platform after any changes indicates your acceptance of the modified Terms. If you do not agree to the changes, you must stop using our platform.</p>
+    </div>
+
+    <div class="section">
+        <h2>11. Governing Law and Dispute Resolution</h2>
+        <p>These Terms shall be governed by and construed in accordance with the laws of [Your Jurisdiction], without regard to its conflict of law principles.</p>
+        <p>Any dispute arising from or relating to these Terms or your use of our platform shall be resolved through binding arbitration in accordance with the rules of [Relevant Arbitration Association]. The arbitration shall be conducted in [Your City, State/Province, Country], and the judgment of the arbitrator may be entered in any court having jurisdiction.</p>
+        <p>Nothing in these Terms will prevent either party from seeking injunctive or other equitable relief from the courts for matters related to data security, intellectual property, or unauthorized access to our platform.</p>
+    </div>
+
+    <div class="section">
+        <h2>12. Severability</h2>
+        <p>If any provision of these Terms is found to be unenforceable or invalid, that provision will be limited or eliminated to the minimum extent necessary, and the remaining provisions will continue in full force and effect.</p>
+    </div>
+
+    <div class="section">
+        <h2>13. Entire Agreement</h2>
+        <p>These Terms, together with our Privacy Policy and any other agreements expressly incorporated by reference, constitute the entire agreement between you and TradeWizard concerning your use of our platform.</p>
+    </div>
+
+    <div class="contact-info">
+        <h2>14. Contact Information</h2>
+        <p>If you have any questions about these Terms, please contact us at:</p>
+        <p>Email: legal@tradewizard.com</p>
+        <p>Address: [Your Company Address]</p>
+    </div>
+    
+            <a href="/" class="back-to-home">← Back to Homepage</a>
+        </div> <!-- End of content -->
+    </div> <!-- End of container -->
+
+    <footer class="footer">
+        <p>&copy; 2025 TradeWizard. All rights reserved.</p>
+    </footer>
+</body>
+</html>

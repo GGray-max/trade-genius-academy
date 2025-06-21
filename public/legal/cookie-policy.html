@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Policy - TradeWizard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --tw-blue: #2563eb;
+            --tw-blue-dark: #1e40af;
+            --tw-green: #10b981;
+            --tw-bg-light: #f9fafb;
+            --tw-text-primary: #111827;
+            --tw-text-secondary: #4b5563;
+            --tw-border-color: #e5e7eb;
+            --tw-header-height: 70px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--tw-text-primary);
+            background-color: var(--tw-bg-light);
+            padding-top: var(--tw-header-height);
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--tw-header-height);
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 100;
+        }
+        .header-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--tw-text-primary);
+        }
+        .logo-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--tw-blue) 0%, var(--tw-green) 100%);
+            margin-right: 10px;
+        }
+        .logo-text {
+            font-weight: 700;
+            font-size: 20px;
+        }
+        .nav {
+            display: flex;
+            gap: 24px;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: var(--tw-text-secondary);
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--tw-blue);
+        }
+        .nav-link.active {
+            color: var(--tw-blue);
+            font-weight: 600;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 24px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .document-header {
+            padding: 40px 40px 20px 40px;
+            border-bottom: 1px solid var(--tw-border-color);
+        }
+        .content {
+            padding: 40px;
+        }
+        h1 {
+            color: var(--tw-text-primary);
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        h2 {
+            color: var(--tw-text-primary);
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--tw-border-color);
+        }
+        h3 {
+            color: var(--tw-text-primary);
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        p, li {
+            font-size: 16px;
+            color: var(--tw-text-secondary);
+            margin-bottom: 16px;
+        }
+        ul, ol {
+            padding-left: 24px;
+            margin-bottom: 24px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .last-updated {
+            font-style: italic;
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .cookie-control {
+            background-color: #f0f9ff;
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid var(--tw-blue);
+        }
+        .contact-info {
+            background-color: #f8fafc;
+            padding: 24px;
+            border-radius: 8px;
+            margin-top: 40px;
+            border-left: 4px solid var(--tw-blue);
+        }
+        .legal-nav {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 30px 0;
+            padding: 16px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+        }
+        .legal-nav-link {
+            text-decoration: none;
+            color: var(--tw-text-secondary);
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .legal-nav-link:hover {
+            background-color: #e5e7eb;
+        }
+        .legal-nav-link.active {
+            background-color: var(--tw-blue);
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid var(--tw-border-color);
+            padding: 12px 16px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: var(--tw-text-primary);
+        }
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        .back-to-home {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: var(--tw-blue);
+            font-weight: 500;
+        }
+        .back-to-home:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--tw-text-secondary);
+            font-size: 14px;
+        }
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+            .container {
+                margin: 20px auto;
+                padding: 0 16px;
+            }
+            .document-header, .content {
+                padding: 24px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+            h2 {
+                font-size: 20px;
+            }
+            .legal-nav {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <div class="logo-icon"></div>
+                <span class="logo-text">TradeWizard</span>
+            </a>
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/features" class="nav-link">Features</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/docs" class="nav-link">Docs</a>
+                <a href="/marketplace" class="nav-link">Marketplace</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="document-header">
+            <h1>Cookie Policy</h1>
+            <div class="last-updated">Last Updated: May 21, 2025</div>
+        </div>
+        
+        <div class="legal-nav">
+            <a href="/legal/terms-of-service.html" class="legal-nav-link">Terms of Service</a>
+            <a href="/legal/privacy-policy.html" class="legal-nav-link">Privacy Policy</a>
+            <a href="/legal/cookie-policy.html" class="legal-nav-link active">Cookie Policy</a>
+        </div>
+        
+        <div class="content">
+
+    <div class="section">
+        <h2>1. Introduction</h2>
+        <p>This Cookie Policy explains how TradeWizard ("we," "our," or "us") uses cookies and similar technologies when you visit our website and use our trading platform and services (collectively, the "Services").</p>
+        <p>By using our Services, you consent to the use of cookies and similar technologies in accordance with this Cookie Policy. If you do not accept the use of cookies, please disable them as explained in this policy so they cannot be stored on your device when you use our Services.</p>
+    </div>
+
+    <div class="section">
+        <h2>2. What Are Cookies?</h2>
+        <p>Cookies are small text files that are placed on your computer, smartphone, or other device when you visit a website. They allow the website to recognize your device and remember certain information about your visit, such as your preferences and settings.</p>
+        <p>Cookies are widely used to make websites work more efficiently, as well as to provide information to the owners of the site. They help us understand how our Services are being used and allow us to improve your experience.</p>
+    </div>
+
+    <div class="section">
+        <h2>3. Types of Cookies We Use</h2>
+        <p>We use different types of cookies for various reasons. The cookies used on our Services fall into the following categories:</p>
+
+        <table>
+            <tr>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Purpose</th>
+                <th>Duration</th>
+            </tr>
+            <tr>
+                <td><strong>Essential Cookies</strong></td>
+                <td>These cookies are necessary for the Services to function properly. They enable core functionality such as security, authentication, and session management.</td>
+                <td>
+                    <ul>
+                        <li>Maintaining your login session</li>
+                        <li>Remembering security settings</li>
+                        <li>Load balancing</li>
+                        <li>Ensuring site security</li>
+                    </ul>
+                </td>
+                <td>Session to 2 years</td>
+            </tr>
+            <tr>
+                <td><strong>Preference Cookies</strong></td>
+                <td>These cookies allow us to remember choices you make and provide enhanced, personalized features.</td>
+                <td>
+                    <ul>
+                        <li>Remembering your language preferences</li>
+                        <li>Saving dashboard configurations</li>
+                        <li>Remembering your trading view settings</li>
+                        <li>Storing interface customizations</li>
+                    </ul>
+                </td>
+                <td>Session to 1 year</td>
+            </tr>
+            <tr>
+                <td><strong>Analytics Cookies</strong></td>
+                <td>These cookies help us understand how visitors interact with our Services by collecting and reporting information anonymously.</td>
+                <td>
+                    <ul>
+                        <li>Analyzing visitor behavior</li>
+                        <li>Tracking feature usage</li>
+                        <li>Identifying error patterns</li>
+                        <li>Testing new features</li>
+                    </ul>
+                </td>
+                <td>1 day to 2 years</td>
+            </tr>
+            <tr>
+                <td><strong>Marketing Cookies</strong></td>
+                <td>These cookies are used to track visitors across websites to display relevant advertisements.</td>
+                <td>
+                    <ul>
+                        <li>Measuring ad effectiveness</li>
+                        <li>Limiting ad frequency</li>
+                        <li>Personalizing advertisements</li>
+                        <li>Creating marketing profiles</li>
+                    </ul>
+                </td>
+                <td>30 days to 1 year</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>4. Specific Cookies We Use</h2>
+        <p>The table below provides more detailed information about the specific cookies used on our Services:</p>
+
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Provider</th>
+                <th>Purpose</th>
+                <th>Expiration</th>
+                <th>Type</th>
+            </tr>
+            <tr>
+                <td>tw_session</td>
+                <td>TradeWizard</td>
+                <td>Maintains user sessions and authentication status</td>
+                <td>Session</td>
+                <td>Essential</td>
+            </tr>
+            <tr>
+                <td>tw_auth</td>
+                <td>TradeWizard</td>
+                <td>Stores encrypted authentication tokens for secure access</td>
+                <td>30 days</td>
+                <td>Essential</td>
+            </tr>
+            <tr>
+                <td>tw_preferences</td>
+                <td>TradeWizard</td>
+                <td>Stores user interface preferences and settings</td>
+                <td>1 year</td>
+                <td>Preference</td>
+            </tr>
+            <tr>
+                <td>tw_chart_config</td>
+                <td>TradeWizard</td>
+                <td>Saves trading chart configurations and indicators</td>
+                <td>6 months</td>
+                <td>Preference</td>
+            </tr>
+            <tr>
+                <td>_ga</td>
+                <td>Google Analytics</td>
+                <td>Registers a unique ID used to generate statistical data on how you use the website</td>
+                <td>2 years</td>
+                <td>Analytics</td>
+            </tr>
+            <tr>
+                <td>_gid</td>
+                <td>Google Analytics</td>
+                <td>Registers a unique ID used to generate statistical data on how you use the website</td>
+                <td>24 hours</td>
+                <td>Analytics</td>
+            </tr>
+            <tr>
+                <td>_fbp</td>
+                <td>Facebook</td>
+                <td>Used by Facebook to deliver advertisements when users later visit Facebook or digital platforms powered by Facebook advertising</td>
+                <td>3 months</td>
+                <td>Marketing</td>
+            </tr>
+            <tr>
+                <td>_ttp</td>
+                <td>TikTok</td>
+                <td>Used by TikTok to track user interaction with TikTok's marketing campaigns</td>
+                <td>1 year</td>
+                <td>Marketing</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>5. Third-Party Cookies</h2>
+        <p>In addition to our own cookies, we may also use various third-party cookies to report usage statistics, deliver advertisements, and so on. These cookies may include:</p>
+        <ul>
+            <li><strong>Analytics providers</strong> such as Google Analytics to help us understand how visitors use our Services</li>
+            <li><strong>Advertising networks</strong> such as Facebook, Google Ads, and others to deliver targeted advertisements</li>
+            <li><strong>Social media platforms</strong> to enable features like sharing content to these platforms</li>
+            <li><strong>Performance monitoring services</strong> to help us identify and fix technical issues</li>
+        </ul>
+        <p>These third parties may use cookies, web beacons, and similar technologies to collect information about your use of our Services and other websites. This information may be used to provide advertisements for goods and services that may interest you and to help us better understand user behavior.</p>
+    </div>
+
+    <div class="cookie-control">
+        <h2>6. Managing Your Cookie Preferences</h2>
+        <p>You have the right to decide whether to accept or reject cookies. You can exercise your cookie preferences as follows:</p>
+
+        <h3>6.1 Cookie Preference Center</h3>
+        <p>You can manage your cookie preferences through our <a href="/cookie-preferences">Cookie Preference Center</a> where you can choose which categories of cookies you accept or reject. Essential cookies cannot be rejected as they are necessary for the Services to function properly.</p>
+
+        <h3>6.2 Browser Controls</h3>
+        <p>Most web browsers allow you to manage your cookie preferences through the browser settings. You can usually find these settings in the "options" or "preferences" menu of your browser. The following links provide information on how to modify cookie settings in the most popular browsers:</p>
+        <ul>
+            <li><a href="https://support.google.com/chrome/answer/95647" target="_blank">Google Chrome</a></li>
+            <li><a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank">Mozilla Firefox</a></li>
+            <li><a href="https://support.apple.com/en-us/HT201265" target="_blank">Safari</a></li>
+            <li><a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank">Microsoft Edge</a></li>
+            <li><a href="https://help.opera.com/en/latest/web-preferences/#cookies" target="_blank">Opera</a></li>
+        </ul>
+
+        <h3>6.3 Do Not Track</h3>
+        <p>Some browsers offer a "Do Not Track" ("DNT") signal through which a user can indicate a preference not to have their web activities tracked. While we do our best to respect user preferences, we currently do not respond to DNT signals as there is no common industry standard for compliance.</p>
+
+        <h3>6.4 Third-Party Opt-Out Tools</h3>
+        <p>For cookies placed by third-party providers, you can also manage your preferences through these services:</p>
+        <ul>
+            <li><a href="https://tools.google.com/dlpage/gaoptout" target="_blank">Google Analytics Opt-out Browser Add-on</a></li>
+            <li><a href="https://optout.networkadvertising.org/" target="_blank">Network Advertising Initiative Opt-out</a></li>
+            <li><a href="https://optout.aboutads.info/" target="_blank">Digital Advertising Alliance Opt-out</a></li>
+            <li><a href="https://www.youronlinechoices.com/" target="_blank">European Interactive Digital Advertising Alliance Opt-out (for EU users)</a></li>
+        </ul>
+
+        <h3>6.5 Consequences of Disabling Cookies</h3>
+        <p>Please note that if you choose to disable cookies, you may not be able to access certain parts of our Services, and some features may not function properly. In particular, you will not be able to use features that require you to be logged in.</p>
+    </div>
+
+    <div class="section">
+        <h2>7. Similar Technologies</h2>
+        <p>In addition to cookies, we may use other similar technologies to track your use of our Services:</p>
+        
+        <h3>7.1 Web Beacons</h3>
+        <p>Web beacons (also known as "clear gifs," "pixel tags," or "web bugs") are tiny graphics with a unique identifier, similar in function to cookies. While cookies are stored on your hard drive, web beacons are embedded invisibly on web pages. We may use web beacons to track user activities, determine the effectiveness of our marketing campaigns, and compile aggregate statistics about website usage.</p>
+        
+        <h3>7.2 Local Storage</h3>
+        <p>We may use Local Storage (including HTML5 Local Storage and local shared objects) to store content information and preferences. Similar to cookies, Local Storage technologies can store data on your device for use by our Services. Various browsers may offer their own management tools for removing HTML5 Local Storage.</p>
+        
+        <h3>7.3 Fingerprinting</h3>
+        <p>To avoid cookies in some cases, websites use other techniques that enable them to recognize devices on their return, often called fingerprinting. This involves collecting information about your device, browser, and plugins to create a unique "fingerprint." We may use device fingerprinting for security and fraud prevention purposes.</p>
+    </div>
+
+    <div class="section">
+        <h2>8. Updates to This Cookie Policy</h2>
+        <p>We may update this Cookie Policy from time to time to reflect changes in technology, regulation, or our business practices. Any changes will become effective when we post the revised Cookie Policy on our website. We will notify you of any material changes as required by law. We encourage you to review this Cookie Policy periodically to stay informed about our use of cookies.</p>
+    </div>
+
+    <div class="contact-info">
+        <h2>9. Contact Us</h2>
+        <p>If you have any questions about our use of cookies or this Cookie Policy, please contact us at:</p>
+        <p>Email: privacy@tradewizard.com</p>
+        <p>Address: [Your Company Address]</p>
+    </div>
+
+            <a href="/" class="back-to-home">← Back to Homepage</a>
+        </div> <!-- End of content -->
+    </div> <!-- End of container -->
+
+    <footer class="footer">
+        <p>&copy; 2025 TradeWizard. All rights reserved.</p>
+    </footer>
+</body>
+</html>
