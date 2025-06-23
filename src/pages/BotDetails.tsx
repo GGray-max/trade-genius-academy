@@ -328,9 +328,9 @@ const BotDetails = () => {
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
         amount={bot.price_monthly}
-        currency="USD"
-        planType="monthly"
-        botId={bot.id}
+        planName={`${bot.name} Monthly Plan`}
+        planId={bot.id}
+        userEmail={user?.email || ''}
       />
     </MainLayout>
   );

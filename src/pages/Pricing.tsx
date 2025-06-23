@@ -185,8 +185,9 @@ const Pricing = () => {
           isOpen={isPaymentModalOpen}
           onClose={() => setIsPaymentModalOpen(false)}
           amount={selectedTier.price}
-          currency="USD"
-          planType={billingPeriod}
+          planName={selectedTier.name}
+          planId={selectedTier.name.toLowerCase().replace(/\s+/g, '-')}
+          userEmail={user?.email || ''}
         />
       )}
     </MainLayout>
