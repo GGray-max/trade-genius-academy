@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, CreditCard, Smartphone, Building, Coins } from 'lucide-react';
+import { X, CreditCard, Smartphone, Building, Coins, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -114,6 +114,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       }
     }
 
+    // No extra validation required for PayPal or Crypto
     return null;
   };
 
@@ -162,6 +163,20 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         } else if (selectedMethod === 'card') {
           toast.success('Payment processed successfully!');
           onClose();
+        } else if (selectedMethod === 'paypal') {
+          const approval = response.data.approvalUrl;
+          if (approval) {
+            window.open(approval, '_blank');
+            pollPaymentStatus('paypal', response.data.transactionId);
+            toast.info('Complete the payment in the newly opened PayPal window.');
+          }
+        } else if (selectedMethod === 'crypto') {
+          const paymentUrl = response.data.paymentUrl;
+          if (paymentUrl) {
+            window.open(paymentUrl, '_blank');
+            pollPaymentStatus('crypto', response.data.transactionId);
+            toast.info('Complete the crypto payment in the opened tab.');
+          }
         }
       } else {
         toast.error(response.data.error || 'Payment failed');
@@ -209,13 +224,21 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     setTimeout(checkStatus, 5000); // Start checking after 5 seconds
   };
 
+  // Return only an icon element; descriptive text handled in renderPaymentForm
   const getMethodIcon = (methodId: string) => {
     switch (methodId) {
-      case 'mpesa': return <Smartphone className="h-5 w-5" />;
-      case 'card': return <CreditCard className="h-5 w-5" />;
-      case 'bank_transfer': return <Building className="h-5 w-5" />;
-      case 'crypto': return <Coins className="h-5 w-5" />;
-      default: return <CreditCard className="h-5 w-5" />;
+      case 'mpesa':
+        return <Smartphone className="h-5 w-5" />;
+      case 'paypal':
+        return <DollarSign className="h-5 w-5" />;
+      case 'crypto':
+        return <Coins className="h-5 w-5" />;
+      case 'card':
+        return <CreditCard className="h-5 w-5" />;
+      case 'bank_transfer':
+        return <Building className="h-5 w-5" />;
+      default:
+        return <CreditCard className="h-5 w-5" />;
     }
   };
 
@@ -292,12 +315,24 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           </div>
         );
 
+      case 'paypal':
+        return (
+          <div className="text-center py-8 text-sm text-muted-foreground">
+            You will be redirected to PayPal to complete your payment securely.
+          </div>
+        );
+
+      case 'crypto':
+        return (
+          <div className="text-center py-8 text-sm text-muted-foreground">
+            You will be redirected to Coinbase Commerce where you can pay with BTC, USDT, ETH and more.
+          </div>
+        );
+
       default:
         return (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">
-              This payment method is coming soon.
-            </p>
+            <p className="text-muted-foreground">This payment method is coming soon.</p>
           </div>
         );
     }
@@ -329,9 +364,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           <div>
             <Label className="text-base font-medium">Payment Method</Label>
             <div className="grid gap-3 mt-3">
-              {paymentMethods.map((method) => (
+              {paymentMethods.map((method, index) => (
                 <button
-                  key={method.id}
+                  key={`${method.id}-${index}`}
                   className={`flex items-center p-3 border rounded-lg text-left transition-colors ${
                     selectedMethod === method.id
                       ? 'border-blue-500 bg-blue-50'

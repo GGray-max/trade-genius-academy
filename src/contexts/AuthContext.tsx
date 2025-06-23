@@ -52,6 +52,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [authInitialized, setAuthInitialized] = useState(false);
+
+  /*
+   * Keep the current authenticated user's ID in localStorage so that
+   * the API axios instance can reliably attach it as the `User-Id` header.
+   * This value is cleared automatically when the user logs out or auth resets.
+   */
+  useEffect(() => {
+    if (user?.id) {
+      localStorage.setItem('user-id', user.id);
+    } else {
+      localStorage.removeItem('user-id');
+    }
+  }, [user]);
   const navigate = useNavigate();
   const location = useLocation();
   
