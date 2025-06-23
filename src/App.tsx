@@ -43,7 +43,7 @@ import Cookies from "./pages/Cookies";
 import TestSession from "./pages/TestSession";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ui/ErrorBoundary";
-import GlobalErrorBoundary from "./components/ui/GlobalErrorBoundary";
+import { GlobalErrorBoundary } from "./components/ui/GlobalErrorBoundary";
 
 // Create a new QueryClient instance inside the component
 const App = () => {
