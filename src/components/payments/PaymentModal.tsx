@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, CreditCard, Smartphone, Building, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,7 @@ interface PaymentMethod {
   currencies: string[];
 }
 
-const PaymentModal: React.FC<PaymentModalProps> = ({
+export const PaymentModal: React.FC<PaymentModalProps> = ({
   isOpen,
   onClose,
   amount,
@@ -71,7 +70,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const formatPhoneNumber = (value: string) => {
     // Remove all non-digits
     const digits = value.replace(/\D/g, '');
-    
+
     // Format as Kenyan phone number
     if (digits.length <= 10) {
       return digits.replace(/(\d{3})(\d{3})(\d{0,4})/, '$1 $2 $3').trim();
@@ -157,7 +156,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             response.data.customerMessage || 
             'M-PESA payment initiated. Please check your phone for the STK push prompt.'
           );
-          
+
           // Poll for payment status
           pollPaymentStatus(selectedMethod, response.data.transactionId);
         } else if (selectedMethod === 'card') {
@@ -185,7 +184,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     const checkStatus = async () => {
       try {
         const response = await api.get(`/payments/verify/${method}/${transactionId}`);
-        
+
         if (response.data.success) {
           toast.success('Payment completed successfully!');
           onClose();
@@ -373,5 +372,3 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     </div>
   );
 };
-
-export { PaymentModal };

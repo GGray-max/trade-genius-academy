@@ -12,24 +12,13 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
   const { isAdmin, loading, refreshUserProfile, user } = useAuth();
 
   useEffect(() => {
-    if (user) {
+    if (user && refreshUserProfile) {
       // Refresh user profile to ensure admin status is up to date
-      const refreshUserProfile = async () => {
-        try {
-          // Assuming 'api' is defined elsewhere, adjust as needed
-          const response = await api.get('/users/profile');
-          if (response.data.success) {
-            // Update user context with latest profile data
-            console.log('User profile refreshed:', response.data.user);
-          }
-        } catch (error) {
-          console.error('Failed to refresh user profile:', error);
-        }
-      };
-
-      refreshUserProfile();
+      refreshUserProfile().catch((error) => {
+        console.error('Failed to refresh user profile:', error);
+      });
     }
-  }, [user]);
+  }, [user, refreshUserProfile]);
 
   if (loading) {
     return (
