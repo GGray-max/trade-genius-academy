@@ -1,74 +1,217 @@
-import { PaymentProvider } from './providers';
 
-export interface PaymentRequest {
-  amount: number;
-  currency: string;
-  customerId: string;
-  paymentMethod: string;
-  description: string;
-  metadata: Record<string, any>;
+import { MpesaProvider, MpesaConfig, MpesaPaymentRequest } from './providers/mpesa.provider';
+import { CardProvider, CardConfig, CardPaymentRequest } from './providers/card.provider';
+
+export type PaymentMethod = 'mpesa' | 'card' | 'bank_transfer' | 'crypto';
+
+export interface PaymentConfig {
+  mpesa?: MpesaConfig;
+  card?: CardConfig;
 }
 
-export interface PaymentResponse {
+export interface PaymentRequest {
+  method: PaymentMethod;
+  amount: number;
+  currency: string;
+  customerEmail: string;
+  description: string;
+  metadata?: Record<string, any>;
+  // Method-specific fields
+  phoneNumber?: string; // For M-PESA
+  cardToken?: string; // For card payments
+  walletAddress?: string; // For crypto
+  bankDetails?: any; // For bank transfers
+}
+
+export interface PaymentResult {
   success: boolean;
   transactionId?: string;
+  paymentIntentId?: string;
+  checkoutRequestId?: string;
+  clientSecret?: string;
+  requiresAction?: boolean;
   error?: string;
-  status: 'pending' | 'completed' | 'failed';
-  providerResponse?: any;
+  customerMessage?: string;
 }
 
 export class PaymentService {
-  private providers: Record<string, PaymentProvider>;
+  private mpesaProvider?: MpesaProvider;
+  private cardProvider?: CardProvider;
 
-  constructor() {
-    this.providers = {};
-  }
-
-  public registerProvider(name: string, provider: PaymentProvider) {
-    this.providers[name] = provider;
-  }
-
-  public async processPayment(request: PaymentRequest): Promise<PaymentResponse> {
-    const provider = this.providers[request.paymentMethod];
-    
-    if (!provider) {
-      return {
-        success: false,
-        error: `Payment method ${request.paymentMethod} not supported`,
-        status: 'failed'
-      };
+  constructor(config: PaymentConfig) {
+    if (config.mpesa) {
+      this.mpesaProvider = new MpesaProvider(config.mpesa);
     }
+    if (config.card) {
+      this.cardProvider = new CardProvider(config.card);
+    }
+  }
 
+  async processPayment(paymentRequest: PaymentRequest): Promise<PaymentResult> {
     try {
-      return await provider.processPayment(request);
+      switch (paymentRequest.method) {
+        case 'mpesa':
+          return await this.processMpesaPayment(paymentRequest);
+        
+        case 'card':
+          return await this.processCardPayment(paymentRequest);
+        
+        case 'bank_transfer':
+          return await this.processBankTransfer(paymentRequest);
+        
+        case 'crypto':
+          return await this.processCryptoPayment(paymentRequest);
+        
+        default:
+          return {
+            success: false,
+            error: `Unsupported payment method: ${paymentRequest.method}`
+          };
+      }
     } catch (error) {
+      console.error('Payment processing error:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        status: 'failed'
+        error: 'Payment processing failed'
       };
     }
   }
 
-  public async verifyPayment(transactionId: string, provider: string): Promise<PaymentResponse> {
-    const paymentProvider = this.providers[provider];
-    
-    if (!paymentProvider) {
-      return {
-        success: false,
-        error: `Provider ${provider} not found`,
-        status: 'failed'
-      };
+  private async processMpesaPayment(request: PaymentRequest): Promise<PaymentResult> {
+    if (!this.mpesaProvider) {
+      return { success: false, error: 'M-PESA not configured' };
     }
 
+    if (!request.phoneNumber) {
+      return { success: false, error: 'Phone number required for M-PESA' };
+    }
+
+    const mpesaRequest: MpesaPaymentRequest = {
+      amount: request.amount,
+      phoneNumber: request.phoneNumber,
+      accountReference: request.metadata?.userId || 'TRADEWIZARD',
+      transactionDesc: request.description
+    };
+
+    const result = await this.mpesaProvider.initiateSTKPush(mpesaRequest);
+
+    return {
+      success: result.success,
+      checkoutRequestId: result.checkoutRequestId,
+      transactionId: result.checkoutRequestId,
+      error: result.error,
+      customerMessage: result.customerMessage
+    };
+  }
+
+  private async processCardPayment(request: PaymentRequest): Promise<PaymentResult> {
+    if (!this.cardProvider) {
+      return { success: false, error: 'Card payments not configured' };
+    }
+
+    if (!request.cardToken) {
+      return { success: false, error: 'Card token required' };
+    }
+
+    const cardRequest: CardPaymentRequest = {
+      amount: request.amount,
+      currency: request.currency,
+      cardToken: request.cardToken,
+      customerEmail: request.customerEmail,
+      description: request.description,
+      metadata: request.metadata
+    };
+
+    const result = await this.cardProvider.createPaymentIntent(cardRequest);
+
+    return {
+      success: result.success,
+      paymentIntentId: result.paymentIntentId,
+      clientSecret: result.clientSecret,
+      transactionId: result.transactionId,
+      error: result.error
+    };
+  }
+
+  private async processBankTransfer(request: PaymentRequest): Promise<PaymentResult> {
+    // Placeholder for bank transfer implementation
+    // This would integrate with banking APIs or payment processors
+    return {
+      success: false,
+      error: 'Bank transfer not yet implemented. Please use M-PESA or card payment.'
+    };
+  }
+
+  private async processCryptoPayment(request: PaymentRequest): Promise<PaymentResult> {
+    // Placeholder for cryptocurrency payment implementation
+    // This would integrate with blockchain networks or crypto payment processors
+    return {
+      success: false,
+      error: 'Cryptocurrency payments not yet implemented. Please use M-PESA or card payment.'
+    };
+  }
+
+  async verifyPayment(method: PaymentMethod, transactionId: string): Promise<PaymentResult> {
     try {
-      return await paymentProvider.verifyPayment(transactionId);
+      switch (method) {
+        case 'mpesa':
+          if (!this.mpesaProvider) {
+            return { success: false, error: 'M-PESA not configured' };
+          }
+          const mpesaResult = await this.mpesaProvider.queryPaymentStatus(transactionId);
+          return {
+            success: mpesaResult.ResponseCode === '0',
+            transactionId,
+            error: mpesaResult.ResponseCode !== '0' ? mpesaResult.ResponseDescription : undefined
+          };
+
+        case 'card':
+          if (!this.cardProvider) {
+            return { success: false, error: 'Card payments not configured' };
+          }
+          const cardResult = await this.cardProvider.retrievePayment(transactionId);
+          return {
+            success: cardResult.status === 'succeeded',
+            transactionId,
+            error: cardResult.status !== 'succeeded' ? 'Payment not completed' : undefined
+          };
+
+        default:
+          return {
+            success: false,
+            error: 'Payment verification not supported for this method'
+          };
+      }
     } catch (error) {
+      console.error('Payment verification error:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        status: 'failed'
+        error: 'Payment verification failed'
       };
     }
   }
-} 
+
+  async refundPayment(method: PaymentMethod, transactionId: string, amount?: number): Promise<PaymentResult> {
+    try {
+      switch (method) {
+        case 'card':
+          if (!this.cardProvider) {
+            return { success: false, error: 'Card payments not configured' };
+          }
+          return await this.cardProvider.refundPayment(transactionId, amount);
+
+        default:
+          return {
+            success: false,
+            error: 'Refunds not supported for this payment method'
+          };
+      }
+    } catch (error) {
+      console.error('Refund error:', error);
+      return {
+        success: false,
+        error: 'Refund processing failed'
+      };
+    }
+  }
+}

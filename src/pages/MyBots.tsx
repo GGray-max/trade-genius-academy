@@ -21,7 +21,7 @@ const MyBots = () => {
     queryKey: ['userBots', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      
+
       const { data, error } = await supabase
         .from('user_bots')
         .select(`
@@ -29,7 +29,7 @@ const MyBots = () => {
           bot:bot_id (*)
         `)
         .eq('user_id', user.id);
-      
+
       if (error) throw error;
       return data;
     },
@@ -167,7 +167,7 @@ interface BotCardProps {
 
 const BotCard = ({ subscription, onStatusChange }: BotCardProps) => {
   const bot = subscription.bot;
-  
+
   return (
     <Card>
       <CardHeader>
@@ -217,4 +217,4 @@ const BotCard = ({ subscription, onStatusChange }: BotCardProps) => {
   );
 };
 
-export default MyBots; 
+export default MyBots;

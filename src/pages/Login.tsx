@@ -51,7 +51,7 @@ const Login = () => {
         console.log('Auth loading timeout reached, resetting loading state');
         setIsLoading(false);
       }, 3000); // 3 second timeout
-      
+
       return () => clearTimeout(timer);
     }
   }, [user, profile, navigate, authLoading]);
@@ -66,35 +66,35 @@ const Login = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log('Login form submitted with:', values.email);
-    
+
     // Prevent multiple submissions
     if (isLoading) {
       console.log('Already submitting login form, ignoring duplicate submission');
       return; 
     }
-    
+
     // Set a timeout to prevent the login getting stuck indefinitely
     const loginTimeout = setTimeout(() => {
       console.log('Login timeout reached - forcing reset of loading state');
       setIsLoading(false);
       toast.error('Login timed out. Please try again.');
     }, 10000); // 10 second timeout
-    
+
     setIsLoading(true);
     try {
       console.log('Calling signIn function...');
-      
+
       // Clear any existing session tokens with the correct token key
       const tokenKey = getTokenKey();
       console.log(`Clearing existing token (${tokenKey})`);
       localStorage.removeItem(tokenKey);
-      
+
       // Wait a moment to ensure the token clear takes effect
       await new Promise(resolve => setTimeout(resolve, 100));
-      
+
       // Now attempt to sign in
       await signIn(values.email, values.password);
-      
+
       console.log('signIn function completed successfully');
       // Auth context will handle the navigation
     } catch (error) {
@@ -127,7 +127,7 @@ const Login = () => {
               Sign in to your TradeWizard account
             </p>
           </div>
-          
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-6">
               <div className="space-y-4 rounded-md shadow-sm">
@@ -150,7 +150,7 @@ const Login = () => {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="password"
@@ -215,7 +215,7 @@ const Login = () => {
                   </>
                 )}
               </Button>
-              
+
               <div className="text-center mt-4">
                 <p className="text-sm text-gray-600">
                   Don't have an account?{" "}
