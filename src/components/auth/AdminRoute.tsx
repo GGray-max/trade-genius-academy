@@ -1,7 +1,8 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { ReactNode, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import api from "@/lib/api";
+import { api } from "@/lib/api";
+import LoadingScreen from "../ui/LoadingScreen";
 
 interface AdminRouteProps {
   children: ReactNode;
