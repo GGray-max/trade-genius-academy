@@ -1,0 +1,61 @@
+I'm preparing this project for production and I need your help making the following improvements efficiently and correctly:
+
+🔐 1. Payment Methods
+Implement each and every payment method in full, such as M-PESA and Visa/MasterCard.
+
+Use placeholder values only for the parts that I must personally provide (e.g. M-PESA API keys, URLs, and credentials).
+
+Ensure all endpoints are secure, and user feedback (success/failure) is handled cleanly in the UI.
+
+🔁 2. Forgot Password Flow
+Implement a robust and working "Forgot Password" flow that:
+
+Sends a reset link or code.
+
+Allows the user to securely set a new password.
+
+Handles all possible errors (invalid email, expired token, etc.) gracefully with proper UI feedback.
+
+🛠️ 3. Fix These Errors:
+✅ Supabase-related 400 errors from this URL:
+
+bash
+Copy
+Edit
+https://ukeknrexersgeghbmtar.supabase.co/rest/v1/user_bots?select=*,bot:bot_id(*)&user_id=eq.ea373166-b448-4109-a2ab-27e0951c4092
+Make sure query structure, user ID, and auth are correct.
+
+✅ Backend analytics API errors (connection refused):
+
+GET /analytics/dashboard
+
+GET /analytics/performance
+Fix the requests or ensure that the server at localhost:5000/api/analytics/... is running and accessible. Add fallback/error handling logic in case the API is offline.
+
+✅ Frontend crash from missing function:
+
+javascript
+Copy
+Edit
+Uncaught TypeError: refreshUserProfile is not a function (at AdminRoute.tsx:17:7)
+Check if the refreshUserProfile() function is imported and defined.
+
+If missing, either implement or remove its reference safely.
+
+✅ Improve error handling throughout the app:
+
+Add error boundaries for React components.
+
+Display user-friendly error messages where needed.
+
+🧹 4. Final Touches
+Clean up unused code and packages.
+
+Ensure all .env variables are being used securely.
+
+Optimize imports, remove logs, and ensure the app runs without console errors or warnings.
+
+Assume that the base tech stack is Vite + React + TypeScript + Supabase + Node/Express backend.
+
+Keep everything production-ready, modular, and easy for me to configure the sensitive parts later.
+
