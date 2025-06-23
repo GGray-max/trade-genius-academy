@@ -1,6 +1,16 @@
-
 const express = require('express');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const { verifyUser, isAdmin } = require('../middleware/auth');
+const { authLimiter, apiLimiter } = require('../middleware/rateLimiter');
+
 const router = express.Router();
+
+// Apply rate limiting to auth routes
+router.use('/login', authLimiter);
+router.use('/signup', authLimiter);
+router.use('/forgot-password', authLimiter);
 const supabase = require('../config/supabase');
 
 // User Sign Up
@@ -107,7 +117,7 @@ router.post('/login', async (req, res) => {
 router.post('/validate-session', async (req, res) => {
   try {
     const { session_token } = req.body;
-    
+
     if (!session_token) {
       return res.status(400).json({ message: 'Session token is required' });
     }
@@ -148,7 +158,7 @@ router.post('/validate-session', async (req, res) => {
 router.post('/logout', async (req, res) => {
   try {
     const { session_token } = req.body;
-    
+
     if (!session_token) {
       return res.status(400).json({ message: 'Session token is required' });
     }

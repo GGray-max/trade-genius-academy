@@ -1,34 +1,17 @@
-
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import LoadingScreen from '@/components/ui/LoadingScreen';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertTriangle, TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
+import { api } from '@/lib/api';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useState, useEffect } from "react";
-import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { 
-  LineChart, 
-  Line, 
-  BarChart, 
-  Bar, 
-  PieChart, 
-  Pie, 
-  AreaChart, 
-  Area,
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer, 
-  Cell
-} from "recharts";
-import { ChartLine, TrendingUp, Users, Clock } from "lucide-react";
-import LoadingScreen from "@/components/ui/LoadingScreen";
+import { ChartLine, Users, Clock } from "lucide-react";
 
 // Mock data for charts
 const performanceData = [
@@ -69,25 +52,78 @@ const tradingActivityData = Array.from({ length: 24 }, (_, i) => ({
 }));
 
 const Analytics = () => {
-  const [loading, setLoading] = useState(true);
+  const { handleApiError } = useErrorHandler();
+
+  // Fetch analytics data
+  const { data: analyticsData, isLoading, error, refetch } = useQuery({
+    queryKey: ['analytics'],
+    queryFn: async () => {
+      const response = await api.get('/analytics/dashboard');
+      return response.data;
+    },
+    onError: handleApiError,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 30 * 1000, // 30 seconds
+  });
+
+  // Fetch performance data
+  const { data: performanceData = [] } = useQuery({
+    queryKey: ['analytics', 'performance'],
+    queryFn: async () => {
+      const response = await api.get('/analytics/performance');
+      return response.data.hourlyTrades || [
+        { hour: '00:00', trades: 12 },
+        { hour: '04:00', trades: 18 },
+        { hour: '08:00', trades: 25 },
+        { hour: '12:00', trades: 31 },
+        { hour: '16:00', trades: 22 },
+        { hour: '20:00', trades: 19 },
+      ];
+    },
+    onError: handleApiError,
+  });
   const [activeTab, setActiveTab] = useState("performance");
 
   useEffect(() => {
     document.title = "Analytics | TradeWizard";
     // Simulate loading data
     const timer = setTimeout(() => {
-      setLoading(false);
     }, 800);
     return () => clearTimeout(timer);
   }, []);
 
-  if (loading) {
+if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
     return (
       <DashboardLayout>
-        <LoadingScreen message="Loading analytics data..." />
+        <div className="space-y-6">
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              Failed to load analytics data. Please try again.
+              <button 
+                onClick={() => refetch()} 
+                className="ml-2 underline hover:no-underline"
+              >
+                Retry
+              </button>
+            </AlertDescription>
+          </Alert>
+        </div>
       </DashboardLayout>
     );
   }
+
+  // Use real data or fallback to mock data
+  const stats = analyticsData?.stats || {
+    totalROI: 28.5,
+    totalTrades: 1247,
+    winRate: 68.3,
+    avgProfit: 145.20
+  };
 
   return (
     <DashboardLayout>
@@ -166,7 +202,7 @@ const Analytics = () => {
             <TabsTrigger value="assets">Asset Allocation</TabsTrigger>
             <TabsTrigger value="activity">Trading Activity</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="performance" className="space-y-4">
             <Card>
               <CardHeader>
@@ -214,7 +250,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="bots" className="space-y-4">
             <Card>
               <CardHeader>
@@ -259,7 +295,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="assets" className="space-y-4">
             <Card>
               <CardHeader>
@@ -294,7 +330,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="activity" className="space-y-4">
             <Card>
               <CardHeader>
