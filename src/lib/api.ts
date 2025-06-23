@@ -18,6 +18,9 @@ const api = axios.create({
   },
 });
 
+// Export the api instance for direct use
+export { api };
+
 // Request interceptor for auth and request logging
 api.interceptors.request.use(
   (config) => {
