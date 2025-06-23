@@ -6,9 +6,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
-import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import CreateBot from "./pages/CreateBot";
@@ -52,7 +53,7 @@ const App = () => {
       },
     },
   });
-  
+
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
@@ -62,10 +63,11 @@ const App = () => {
             <Sonner />
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+
               {/* New routes */}
               <Route path="/features" element={<Features />} />
               <Route path="/pricing" element={<Pricing />} />
@@ -74,7 +76,7 @@ const App = () => {
               <Route path="/marketplace/leaderboard" element={<Leaderboard />} />
               <Route path="/marketplace/new" element={<NewReleases />} />
               <Route path="/bots/:botId" element={<BotDetails />} />
-              
+
               {/* Protected routes */}
               <Route
                 path="/dashboard"
@@ -132,7 +134,7 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
-              
+
               {/* Admin routes */}
               <Route
                 path="/dashboard/admin"
@@ -166,7 +168,7 @@ const App = () => {
                   </AdminRoute>
                 }
               />
-              
+
               {/* New placeholder routes */}
               <Route path="/builder" element={<Builder />} />
               <Route path="/sandbox" element={<Sandbox />} />
@@ -176,10 +178,10 @@ const App = () => {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/cookies" element={<Cookies />} />
-              
+
               {/* Debug route for session testing */}
               <Route path="/test-session" element={<TestSession />} />
-              
+
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />
             </Routes>

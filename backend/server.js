@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -32,10 +31,16 @@ app.get('/', (req, res) => {
 });
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/bots', require('./routes/bots'));
-app.use('/api/bot-requests', require('./routes/botRequests'));
+const authRoutes = require('./routes/auth');
+const botRoutes = require('./routes/bots');
+const userRoutes = require('./routes/users');
+const botRequestRoutes = require('./routes/botRequests');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/bots', botRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/bot-requests', botRequestRoutes);
+app.use('/api/analytics', require('./routes/analytics'));
 
 // Start server
 app.listen(PORT, () => {
