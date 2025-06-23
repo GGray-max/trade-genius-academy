@@ -14,6 +14,24 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
+// Helper function to safely generate storage key
+const generateStorageKey = (url: string): string => {
+  try {
+    if (!url) {
+      return 'sb-auth-token'; // Fallback for development
+    }
+    const parts = url.split('//');
+    if (parts.length < 2) {
+      return 'sb-auth-token'; // Fallback for invalid URL
+    }
+    const domain = parts[1].split('.')[0];
+    return `sb-${domain}-auth-token`;
+  } catch (error) {
+    console.warn('Error generating storage key, using fallback:', error);
+    return 'sb-auth-token'; // Safe fallback
+  }
+};
+
 // Create Supabase client with GUARANTEED session persistence
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -22,7 +40,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     
     // This MUST be the default Supabase key name
     // DO NOT change this value as it will break persistence
-    storageKey: 'sb-' + supabaseUrl.split('//')[1].split('.')[0] + '-auth-token',
+    storageKey: generateStorageKey(supabaseUrl),
     
     // Always use browser localStorage - this is crucial
     storage: localStorage,
@@ -39,12 +57,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 
 // Calculate the correct Supabase token key name
 export const getTokenKey = () => {
-  try {
-    return 'sb-' + supabaseUrl.split('//')[1].split('.')[0] + '-auth-token';
-  } catch (e) {
-    console.error('Error generating token key:', e);
-    return 'sb-auth-token'; // Fallback
-  }
+  return generateStorageKey(supabaseUrl);
 };
 
 // Debug session state with improved diagnostics
