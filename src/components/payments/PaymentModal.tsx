@@ -374,4 +374,4 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   );
 };
 
-export default PaymentModal;
+export { PaymentModal };
