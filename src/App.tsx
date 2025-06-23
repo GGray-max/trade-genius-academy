@@ -42,6 +42,7 @@ import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
 import TestSession from "./pages/TestSession";
 import NotFound from "./pages/NotFound";
+import ErrorBoundary from "./components/ui/ErrorBoundary";
 
 // Create a new QueryClient instance inside the component
 const App = () => {
@@ -56,13 +57,14 @@ const App = () => {
   });
 
   return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Routes>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
@@ -73,6 +75,7 @@ const App = () => {
               <Route path="/features" element={<Features />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/docs" element={<Docs />} />
+              <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/marketplace/trending" element={<TrendingBots />} />
               <Route path="/marketplace/leaderboard" element={<Leaderboard />} />
               <Route path="/marketplace/new" element={<NewReleases />} />
@@ -135,6 +138,14 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/dashboard/users"
+                element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                }
+              />
 
               {/* Admin routes */}
               <Route
@@ -190,6 +201,7 @@ const App = () => {
         </AuthProvider>
       </QueryClientProvider>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 };
 
