@@ -41,6 +41,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
 import TestSession from "./pages/TestSession";
+import NotFound from "./pages/NotFound";
 
 // Create a new QueryClient instance inside the component
 const App = () => {
