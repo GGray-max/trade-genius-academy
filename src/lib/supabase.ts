@@ -17,9 +17,18 @@ if (!supabaseUrl || !supabaseAnonKey) {
 // Helper function to safely generate storage key
 const generateStorageKey = (url: string): string => {
   try {
-    if (!url) {
+    if (!url || url.trim() === '') {
       return 'sb-auth-token'; // Fallback for development
     }
+    
+    // Validate URL format before processing
+    try {
+      new URL(url); // This will throw if URL is invalid
+    } catch {
+      console.warn('Invalid Supabase URL format, using fallback storage key');
+      return 'sb-auth-token';
+    }
+    
     const parts = url.split('//');
     if (parts.length < 2) {
       return 'sb-auth-token'; // Fallback for invalid URL
