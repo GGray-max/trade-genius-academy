@@ -35,7 +35,7 @@ const BotDetails = () => {
     queryKey: ['bot', botId],
     queryFn: async () => {
       if (!botId) throw new Error('Bot ID is required');
-      
+
       const { data, error } = await supabase
         .from('bots')
         .select(`
@@ -53,16 +53,16 @@ const BotDetails = () => {
         `)
         .eq('id', botId)
         .single();
-      
+
       if (error) {
         console.error('Error fetching bot:', error);
         throw new Error(error.message);
       }
-      
+
       if (!data) {
         throw new Error('Bot not found');
       }
-      
+
       return data;
     },
     retry: 2,
@@ -336,4 +336,4 @@ const BotDetails = () => {
   );
 };
 
-export default BotDetails; 
+export default BotDetails;

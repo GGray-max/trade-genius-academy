@@ -43,6 +43,7 @@ import Cookies from "./pages/Cookies";
 import TestSession from "./pages/TestSession";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ui/ErrorBoundary";
+import GlobalErrorBoundary from "./components/ui/GlobalErrorBoundary";
 
 // Create a new QueryClient instance inside the component
 const App = () => {
@@ -57,13 +58,13 @@ const App = () => {
   });
 
   return (
-    <ErrorBoundary>
-      <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
+    <GlobalErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
               <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
@@ -197,11 +198,11 @@ const App = () => {
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </TooltipProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
-    </ErrorBoundary>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+    </GlobalErrorBoundary>
   );
 };
 
