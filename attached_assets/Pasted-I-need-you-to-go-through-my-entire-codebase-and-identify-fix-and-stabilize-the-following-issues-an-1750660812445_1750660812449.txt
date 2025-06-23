@@ -1,0 +1,57 @@
+I need you to go through my entire codebase and identify, fix, and stabilize the following issues and errors to ensure my application is fully functional and production-ready:
+
+🔧 General Fix Instructions:
+Fix all payment method implementations:
+
+Implement full support for all available payment methods (e.g., M-PESA, VISA, etc.).
+
+Leave out only values or credentials I must personally supply (e.g., M-PESA API keys).
+
+Fix "Forgot Password" feature:
+
+Ensure the flow works end-to-end.
+
+Validate email existence, password reset token, and expiry.
+
+Handle and display clear success/error messages.
+
+Fix and handle all the following JavaScript/TypeScript errors:
+
+A. Missing or incorrect module exports/imports:
+PaymentModal.tsx is not exporting PaymentModal, fix it or update the import in BotDetails.tsx.
+
+App.tsx is using an undefined NotFound component. Ensure it's properly imported and exists.
+
+AdminRoute.tsx is importing a default from api.ts, but api.ts has only named exports — fix either the import or the export.
+
+B. Runtime errors:
+Uncaught TypeError: Cannot read properties of undefined (reading 'split') in supabase.ts:21. Inspect what is undefined, add checks, and prevent the crash.
+
+refreshUserProfile is not defined or not a function. Either define it or properly import it where needed.
+
+C. Network/API Errors:
+Multiple 400 Bad Request and 5000/api/analytics/* errors (likely due to net::ERR_CONNECTION_REFUSED). Ensure backend server is connected or that endpoints exist.
+
+Supabase endpoints like /rest/v1/user_bots, /bots, etc., are returning 400 — check request formatting, headers, and Supabase policy.
+
+D. 404 Routing Errors:
+Marketplace and /dashboard/users routes show "404 Not Found". Add missing routes and make sure the NotFound.tsx component is shown only for truly undefined routes.
+
+E. Error boundaries and logging:
+Add a global React error boundary to catch crashes and improve feedback in production.
+
+Improve logging (e.g., toast notifications or console warnings) instead of breaking the UI silently.
+
+Ensure the following:
+
+All components render without crashing.
+
+Routing is smooth and correct.
+
+All API interactions are robust with error handling.
+
+The app builds cleanly with no TypeScript or ESLint errors.
+
+The UI is not blank or broken — display useful fallback/loading/error content where necessary.
+
+✅ In summary, clean up all critical bugs, apply proper error handling, connect missing logic, and prepare the app for production.
