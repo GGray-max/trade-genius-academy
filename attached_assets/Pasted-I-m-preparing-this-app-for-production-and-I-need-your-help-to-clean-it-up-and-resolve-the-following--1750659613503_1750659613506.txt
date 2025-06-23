@@ -1,0 +1,68 @@
+I'm preparing this app for production and I need your help to clean it up and resolve the following issues:
+
+404 Errors and Broken Routes:
+
+The /dashboard/users and /marketplace routes are returning 404.
+
+Please ensure these pages/components exist, are correctly routed in App.tsx, and are not mistakenly caught by the NotFound route.
+
+If they don’t exist yet, scaffold basic placeholders for both.
+
+Analytics API Errors:
+
+I’m seeing ERR_CONNECTION_REFUSED for:
+
+GET http://localhost:5000/api/analytics/dashboard
+
+GET http://localhost:5000/api/analytics/performance
+
+Please:
+
+Check that the backend server is expected to run on port 5000. If not, adjust the base URL.
+
+Ensure axios is using environment variables (e.g. VITE_API_BASE_URL) and not hardcoded URLs.
+
+Gracefully handle network error cases and show a fallback/loading UI.
+
+Component Import Errors:
+
+I’m getting this error:
+Uncaught SyntaxError: The requested module '/src/components/payments/PaymentModal.tsx' does not provide an export named 'PaymentModal'
+
+Ensure PaymentModal.tsx actually exports the component as:
+export const PaymentModal = () => { ... }
+or
+export default PaymentModal and import it accordingly.
+
+App.tsx Error – NotFound is not defined:
+
+This happens when using <Route path="*" element={<NotFound />} />
+
+Either:
+
+Import NotFound properly from the correct path, or
+
+Create a basic NotFound.tsx component under components/ if it doesn’t exist.
+
+AdminRoute.tsx Error – refreshUserProfile failing:
+
+Error: ReferenceError: api is not defined
+
+Ensure api is imported where refreshUserProfile() is defined.
+Example: import api from '@/lib/api' (or correct path).
+
+Also, verify that the api.ts file exports the required methods.
+
+Ensure marketplace is working:
+
+Create and register a working Marketplace.tsx component under /src/pages/Marketplace.tsx if not present.
+
+Route it under a valid <Route path="/marketplace" element={<Marketplace />} />.
+
+Final Cleanup:
+
+Make sure no pages render blank or crash.
+
+Add error boundaries if necessary to catch React rendering issues.
+
+Ensure all required components are correctly imported/exported and used.
