@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -126,7 +125,7 @@ const SecuritySettings = () => {
       // Sign out from all sessions
       const { error } = await supabase.auth.signOut({ scope: "global" });
       if (error) throw error;
-      
+
       // Sign out from current session and redirect to login
       await signOut();
       toast.success("Signed out from all sessions");
