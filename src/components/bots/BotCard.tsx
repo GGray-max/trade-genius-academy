@@ -6,9 +6,10 @@ import { Bot } from "@/types";
 
 interface BotCardProps {
   bot: Bot;
+  recommended?: boolean;
 }
 
-const BotCard = ({ bot }: BotCardProps) => {
+const BotCard = ({ bot, recommended = false }: BotCardProps) => {
   // Helper function to format currency
   const formatCurrency = (amount: number, currency: string) => {
     const symbols: Record<string, string> = {
@@ -35,6 +36,9 @@ const BotCard = ({ bot }: BotCardProps) => {
           <p className="text-gray-500 text-sm">by {bot.createdBy.username}</p>
         </div>
         <div className="flex items-center space-x-1">
+          {recommended && (
+            <Badge className="bg-blue-600 text-white hover:bg-blue-700">Recommended</Badge>
+          )}
           <Badge variant="outline" className="flex items-center space-x-1">
             <span>⭐</span>
             <span>{bot.performance.rating.toFixed(1)}</span>

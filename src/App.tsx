@@ -19,10 +19,12 @@ import AdminBotManagement from "./pages/AdminBotManagement";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/auth/AdminRoute";
 import Analytics from "./pages/Analytics";
+import Backtest from "./pages/Backtest";
 import BotAuditing from "./pages/BotAuditing";
 import MyBots from "./pages/MyBots";
 import BotDetails from "./pages/BotDetails";
 import BotBuilder from "./pages/BotBuilder";
+import AiLab from "./pages/AiLab";
 
 // New page imports
 import Features from "./pages/Features";
@@ -140,6 +142,14 @@ const App = () => {
                 }
               />
               <Route
+                path="/dashboard/backtest"
+                element={
+                  <ProtectedRoute>
+                    <Backtest />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/dashboard/users"
                 element={
                   <AdminRoute>
@@ -179,6 +189,16 @@ const App = () => {
                   <AdminRoute>
                     <BotAuditing />
                   </AdminRoute>
+                }
+              />
+
+              {/* AI Lab protected route */}
+              <Route
+                path="/ai-lab"
+                element={
+                  <ProtectedRoute>
+                    <AiLab />
+                  </ProtectedRoute>
                 }
               />
 

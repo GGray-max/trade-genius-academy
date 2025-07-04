@@ -35,14 +35,22 @@ const authRoutes = require('./routes/auth');
 const botRoutes = require('./routes/bots');
 const userRoutes = require('./routes/users');
 const botRequestRoutes = require('./routes/botRequests');
+const aiStrategyRoute = require('./routes/aiStrategy');
 const paymentRoutes = require('./routes/payments');
+const marketDataRoutes = require('./routes/marketData');
+const newsRoutes = require('./routes/news');
+const derivRoutes = require('./routes/deriv');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/bots', botRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/bot-requests', botRequestRoutes);
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/ai-strategy', aiStrategyRoute);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/market-data', marketDataRoutes);
+app.use('/api/news', newsRoutes);
+app.use('/api/deriv', derivRoutes);
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {

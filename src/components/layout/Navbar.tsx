@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import NavLinkIfLoggedIn from "@/components/auth/NavLinkIfLoggedIn";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -20,7 +21,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const Navbar = () => {
+interface NavbarProps { variant?: "default" | "dark" }
+const Navbar = ({ variant = "default" }: NavbarProps) => {
   const { user, profile, signOut, loading } = useAuth();
   // Only consider logged in if we have both user AND profile
   const isLoggedIn = !!user && !!profile;
@@ -28,8 +30,12 @@ const Navbar = () => {
   // Don't show a special loading state - always show the normal navbar
   // Assume user is not logged in during loading state to display public navbar options
 
+  const dark = variant === "dark";
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className={cn(
+      "sticky top-0 z-50 w-full border-b backdrop-blur supports-[backdrop-filter]:bg-background/60",
+      dark ? "text-white bg-[#0f172a]/80 border-white/10" : "bg-background/95"
+    )}>
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center space-x-2">
@@ -117,6 +123,7 @@ const Navbar = () => {
               <Link to="/dashboard">
                 <Button variant="outline">Dashboard</Button>
               </Link>
+              <NavLinkIfLoggedIn to="/ai-lab">AI Lab</NavLinkIfLoggedIn>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium hidden md:block">
                   {profile.username}

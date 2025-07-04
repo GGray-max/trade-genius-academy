@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
+import { userActivity } from "@/data/userActivity";
 import BotGrid from "@/components/bots/BotGrid";
 import { Bot } from "@/types";
 import { mockBots } from "@/data/mockData";
@@ -24,7 +25,18 @@ const Marketplace = () => {
     fetchBots();
   }, []);
 
-  const trendingBots = [...bots].sort((a, b) => b.subscriptions - a.subscriptions);
+  // --- Recommendation Logic ---
+const recommendedBots = bots.filter((bot) => {
+  // Exclude bots user already subscribed to
+  if (userActivity.subscribedBotIds.includes(bot.id)) return false;
+  // Recommend if shares at least one favorite tag
+  return bot.tags.some((tag) => userActivity.favoriteTags.includes(tag));
+});
+const recommendedIds = recommendedBots.map((b) => b.id);
+
+const allOrderedBots = [...recommendedBots, ...bots.filter((b) => !recommendedIds.includes(b.id))];
+
+const trendingBots = [...bots].sort((a, b) => b.subscriptions - a.subscriptions);
   const topPerformingBots = [...bots].sort((a, b) => b.performance.roi - a.performance.roi);
   const newestBots = [...bots].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -51,28 +63,33 @@ const Marketplace = () => {
             </div>
           </div>
         ) : (
-          <Tabs defaultValue="all">
+          <Tabs defaultValue="recommended">
             <TabsList className="mb-8">
+              <TabsTrigger value="recommended">Recommended</TabsTrigger>
               <TabsTrigger value="all">All Bots</TabsTrigger>
               <TabsTrigger value="trending">Trending</TabsTrigger>
               <TabsTrigger value="top">Top Performing</TabsTrigger>
               <TabsTrigger value="new">Newest</TabsTrigger>
               <TabsTrigger value="audited">Audited</TabsTrigger>
             </TabsList>
-            <TabsContent value="all">
-              <BotGrid bots={bots} />
+            <TabsContent value="recommended">
+               <BotGrid bots={recommendedBots} recommendedIds={recommendedIds} />
+             </TabsContent>
+
+             <TabsContent value="all">
+              <BotGrid bots={allOrderedBots} recommendedIds={recommendedIds} />
             </TabsContent>
             <TabsContent value="trending">
-              <BotGrid bots={trendingBots} />
+              <BotGrid bots={trendingBots} recommendedIds={recommendedIds} />
             </TabsContent>
             <TabsContent value="top">
-              <BotGrid bots={topPerformingBots} />
+              <BotGrid bots={topPerformingBots} recommendedIds={recommendedIds} />
             </TabsContent>
             <TabsContent value="new">
-              <BotGrid bots={newestBots} />
+              <BotGrid bots={newestBots} recommendedIds={recommendedIds} />
             </TabsContent>
             <TabsContent value="audited">
-              <BotGrid bots={auditedBots} />
+              <BotGrid bots={auditedBots} recommendedIds={recommendedIds} />
             </TabsContent>
           </Tabs>
         )}

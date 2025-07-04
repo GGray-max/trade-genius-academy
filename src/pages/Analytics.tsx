@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -198,6 +198,7 @@ if (isLoading) {
         >
           <TabsList>
             <TabsTrigger value="performance">Performance</TabsTrigger>
+            <TabsTrigger value="forecast">Forecast</TabsTrigger>
             <TabsTrigger value="bots">Bot Analytics</TabsTrigger>
             <TabsTrigger value="assets">Asset Allocation</TabsTrigger>
             <TabsTrigger value="activity">Trading Activity</TabsTrigger>

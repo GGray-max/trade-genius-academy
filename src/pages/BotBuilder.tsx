@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { api } from "@/lib/api";
 import { toast } from "sonner";
 import {
   Bot,
@@ -22,6 +24,7 @@ import {
   Code,
   LineChart,
   AlertTriangle,
+  Loader2,
 } from "lucide-react";
 
 // Define block types and their configurations
@@ -82,6 +85,12 @@ const BotBuilder = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  // AI strategy assistant
+  const [goal, setGoal] = useState("");
+  const [aiStrategy, setAiStrategy] = useState<any>(null);
+  const [strategyLoading, setStrategyLoading] = useState(false);
+
+
   const handleAddBlock = (blockType: string, blockId: string) => {
     setBlocks([...blocks, {
       id: `${blockId}-${Date.now()}`,
@@ -100,6 +109,25 @@ const BotBuilder = () => {
     ));
   };
 
+  const handleGenerateStrategy = async () => {
+    if (!goal) {
+      toast.error("Please describe your trading goal");
+      return;
+    }
+    try {
+      setStrategyLoading(true);
+      const res = await api.post("/ai-strategy", { goal });
+      setAiStrategy(res.data.strategy);
+      // Persist for Backtest page
+      localStorage.setItem("latestStrategy", JSON.stringify(res.data.strategy));
+      toast.success("Strategy generated! Review below.");
+    } catch (error) {
+      toast.error("Failed to generate strategy. Please try again.");
+    } finally {
+      setStrategyLoading(false);
+    }
+  };
+
   const handleGenerateBot = async () => {
     if (!botName) {
       toast.error("Please enter a bot name");
@@ -111,8 +139,8 @@ const BotBuilder = () => {
       return;
     }
 
-    if (blocks.length === 0) {
-      toast.error("Please add at least one block to your bot");
+    if (!aiStrategy) {
+      toast.error("Please generate a strategy first");
       return;
     }
 
@@ -123,7 +151,9 @@ const BotBuilder = () => {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Generate a simple MQL4/5 or JS code based on the blocks
-      const code = generateCode(selectedPlatform, blocks);
+      // Simple code stub using generated strategy. TODO: replace with full code generation.
+      const code = `// ${botName} - AI Strategy Bot\n// Auto-generated code\n// Platform: ${selectedPlatform}\n// Strategy:\n// Entry: ${aiStrategy.entry}\n// Exit: ${aiStrategy.exit}\n// StopLoss: ${aiStrategy.stopLoss}\n// TakeProfit: ${aiStrategy.takeProfit}\n// Risk: ${aiStrategy.riskManagement}\n`;
+
 
       // Create a blob and download it
       const blob = new Blob([code], { type: 'text/plain' });
@@ -349,6 +379,42 @@ const ${block.id}Config = {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Building Area */}
+            {/* AI Strategy Assistant */}
+            <Card>
+              <CardHeader>
+                <CardTitle>AI Strategy Assistant</CardTitle>
+                <CardDescription>Describe your trading goal and let AI craft a strategy.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Textarea
+                  placeholder="e.g., low-risk crypto bot focusing on BTC/ETH swing trades"
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
+                />
+                <Button
+                  onClick={handleGenerateStrategy}
+                  disabled={strategyLoading}
+                  className="w-full"
+                >
+                  {strategyLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" /> Generating...
+                    </>
+                  ) : (
+                    "Generate Strategy"
+                  )}
+                </Button>
+                {aiStrategy && (
+                  <div className="bg-gray-50 p-4 rounded-md text-sm space-y-1">
+                    <p><strong>Entry:</strong> {aiStrategy.entry}</p>
+                    <p><strong>Exit:</strong> {aiStrategy.exit}</p>
+                    <p><strong>Stop Loss:</strong> {aiStrategy.stopLoss}</p>
+                    <p><strong>Take Profit:</strong> {aiStrategy.takeProfit}</p>
+                    <p><strong>Risk Mgmt:</strong> {aiStrategy.riskManagement}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>

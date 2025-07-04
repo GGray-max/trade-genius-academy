@@ -7,10 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 interface BotGridProps {
   bots: Bot[];
+  recommendedIds?: string[];
   title?: string;
 }
 
-const BotGrid = ({ bots, title }: BotGridProps) => {
+const BotGrid = ({ bots, title, recommendedIds = [] }: BotGridProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('rating');
 
@@ -73,7 +74,7 @@ const BotGrid = ({ bots, title }: BotGridProps) => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedBots.map((bot) => (
-            <BotCard key={bot.id} bot={bot} />
+            <BotCard key={bot.id} bot={bot} recommended={recommendedIds.includes(bot.id)} />
           ))}
         </div>
       )}

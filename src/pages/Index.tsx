@@ -1,23 +1,25 @@
 
 import MainLayout from "@/components/layout/MainLayout";
-import Hero from "@/components/home/Hero";
-import Features from "@/components/home/Features";
-import HowItWorks from "@/components/home/HowItWorks";
-import Testimonials from "@/components/home/Testimonials";
-import CTASection from "@/components/home/CTASection";
-import TrendingBots from "@/components/bots/TrendingBots";
+import LoggedInHome from "@/components/home/LoggedInHome";
+import LoggedOutLanding from "@/components/home/LoggedOutLanding";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return (
+      <MainLayout>
+        {/* TODO: Replace with skeleton loader */}
+        <div className="flex items-center justify-center py-32 text-gray-500">
+          Loading...
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
-    <MainLayout>
-      <Hero />
-      <div className="container mx-auto px-4 py-10">
-        <TrendingBots />
-      </div>
-      <Features />
-      <HowItWorks />
-      <Testimonials />
-      <CTASection />
+    <MainLayout hideFooter={!!user}>
+      {user ? <LoggedInHome user={user} /> : <LoggedOutLanding />}
     </MainLayout>
   );
 };
